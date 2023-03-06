@@ -24,22 +24,15 @@ def apply_fourier_transform(frame):
     
     return magnitude_spectrum
 
-# Abre la cámara del equipo y regresa su imagen
-# INPUT None
-# OUTPUT Una imagen de cv2 
-def getCamImage():
-    cap = cv2.VideoCapture(0)
-    # Verificar si la cámara se ha abierto correctamente
-    if not cap.isOpened():
-        print("Error al abrir la cámara")
-        exit()
-
-    succes, frame = cap.read()
-    while not succes:
-        print("La cámará no se pudo abrir, re intentado ...")
-        cap = cv2.VideoCapture(0)
-        succes, frame = cap.read()
-    return frame
+# Codifica una imagen y se envía en forma de string para el navegador
+# INPUT image: imagen que se desea codificar
+# OUTPUT String que puede ser recibido por el cliente
+def codeImage(image):
+    (flag, encodedImage) = cv2.imencode(".jpg", image)
+    if not flag:
+        return None
+    return (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' +
+        bytearray(encodedImage) + b'\r\n')
 
 # Genera continuamente una respuesta basada en la imagen de la cámara y aplica 
 # una determinada transformación a la imagen
@@ -47,15 +40,25 @@ def getCamImage():
 # transform: Función que modifica la imagen según las necesidades 
 # OUTPUT: String de respuesta con la imagen codificada
 def generate(transform = lambda x:x):
+    cap = cv2.VideoCapture(0)
+    # Verificar si la cámara se ha abierto correctamente
+    if not cap.isOpened():
+        print("Error al abrir la cámara")
+        exit()
+
     while True:
-        frame = getCamImage()
+        succes, frame = cap.read()
+        # Re intentamos obtener la imagen en caso de fallar
+        while not succes:
+            print("La cámará no se pudo abrir, re intentado ...")
+            cap = cv2.VideoCapture(0)
+            succes, frame = cap.read()
+        
         final_frame = transform(frame)
 
-        (flag, encodedImage) = cv2.imencode(".jpg", final_frame)
-        if not flag:
-            continue
-        yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' +
-            bytearray(encodedImage) + b'\r\n')
+        yield codeImage(final_frame)
+
+        
 
 #-----------------------Flask enrutado----------------------------
 app = Flask(__name__)
