@@ -5,20 +5,27 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Videostreaming</title>
-    <style>
-      .container {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 100vh;
-        background-color: #e2d8f8;
-        color: black;
-        text-align: center;
-      }
-    </style>
   </head>
   <body class="container">
-    <h1>Video en directo</h1>
-    <img src="{{ url_for('video_feed') }}" />
+    <header>
+      <h1>Reconstrucción de DLHM</h1>
+    </header>
+    <main>
+      <div class="left-container">
+        <h3>Espectro</h3>
+        <img src="{{ url_for('video_feed') }}" />
+        <label for="CX">Coordenada X</label>
+        <input type="number" name="CoordenadaX" id="CX" />
+        <label for="CY">Coordenada Y</label>
+        <input type="number" name="CoordenadaY" id="CY" />
+        <label for="Radio">Radio</label>
+        <input type="number" name="Radio" id="Radio" />
+      </div>
+      <div class="right-container">
+        <button>Capturar referencia</button>
+        <button>Ver círculo</button>
+        <button>Reconstrir Holograma</button>
+      </div>
+    </main>
   </body>
 </html>
