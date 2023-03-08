@@ -4,27 +4,62 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Videostreaming</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static',filename='styles/reset.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static',filename='styles/index.css') }}"
+    />
+    <title>DLHM</title>
   </head>
   <body class="container">
     <header>
-      <h1>Reconstrucción de DLHM</h1>
+      <h1 class="title">Reconstrucción de DLHM</h1>
     </header>
     <main>
       <div class="left-container">
-        <h3>Espectro</h3>
-        <img src="{{ url_for('video_feed') }}" />
-        <label for="CX">Coordenada X</label>
-        <input type="number" name="CoordenadaX" id="CX" />
-        <label for="CY">Coordenada Y</label>
-        <input type="number" name="CoordenadaY" id="CY" />
-        <label for="Radio">Radio</label>
-        <input type="number" name="Radio" id="Radio" />
+        <div class="image">
+          <h3>Espectro</h3>
+          <img src="{{ url_for('video_feed') }}" />
+        </div>
+        <div class="inputs">
+          <div class="coordenates">
+            <div class="input-container">
+              <label for="CX">Coordenada X</label>
+              <input type="number" name="CoordenadaX" id="CX" />
+            </div>
+            <div class="input-container">
+              <label for="CY">Coordenada Y</label>
+              <input type="number" name="CoordenadaY" id="CY" />
+            </div>
+          </div>
+          <div class="radio">
+            <div class="input-container">
+              <label for="Radio">Radio</label>
+              <input type="number" name="Radio" id="Radio" />
+            </div>
+          </div>
+        </div>
       </div>
       <div class="right-container">
-        <button>Capturar referencia</button>
-        <button>Ver círculo</button>
-        <button>Reconstrir Holograma</button>
+        <div class="reference">
+          <button class="btn cap">
+            Capturar <br />
+            referencia
+          </button>
+        </div>
+        <div class="reconstruction">
+          <button class="btn cir">Ver círculo</button>
+          <button class="btn holo">Reconstrir Holograma</button>
+        </div>
       </div>
     </main>
   </body>
