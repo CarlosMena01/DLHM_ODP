@@ -24,6 +24,36 @@ def apply_fourier_transform(frame):
     
     return magnitude_spectrum
 
+# Agrega ejes coordenados a la imagen
+# INPUT:
+# img: Imagen a la cual se le agregan los ejes
+# OUTPUT: Otra imagen con los ejes superpuestos
+def add_coordinate_axes(img):
+    # Obtener las dimensiones de la imagen
+    height, width, channels = img.shape
+
+    # Crear una imagen en blanco para la cuadrícula
+    grid = np.zeros((height, width, channels), np.uint8)
+
+    # Definir el tamaño de la cuadrícula (cada cuadro mide 50 píxeles)
+    cell_size = 50
+
+    # Dibujar las líneas verticales de la cuadrícula
+    for x in range(0, width, cell_size):
+        cv2.line(grid, (x, 0), (x, height), (255, 255, 255), 1)
+        cv2.putText(grid, str(x), (x+5, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
+
+    # Dibujar las líneas horizontales de la cuadrícula
+    for y in range(0, height, cell_size):
+        cv2.line(grid, (0, y), (width, y), (255, 255, 255), 1)
+        cv2.putText(grid, str(y), (5, y+15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
+
+    # Combinar la imagen original y la cuadrícula
+    result = cv2.addWeighted(img, 0.7, grid, 0.3, 0)
+
+    return result
+
+
 # Codifica una imagen y se envía en forma de string para el navegador
 # INPUT image: imagen que se desea codificar
 # OUTPUT String que puede ser recibido por el cliente
@@ -69,7 +99,7 @@ def index():
 
 @app.route("/video_feed")
 def video_feed():
-    return Response(generate(apply_fourier_transform), mimetype='multipart/x-mixed-replace; boundary=frame')
+    return Response(generate(add_coordinate_axes), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 #-----------------------Corremos el servidor----------------------------
 if __name__ == "__main__":
