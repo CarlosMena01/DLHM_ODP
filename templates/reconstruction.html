@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static',filename='styles/reset.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static',filename='styles/reconstruction.css') }}"
+    />
+    <title>DLHM</title>
+  </head>
+  <body class="container">
+    <header>
+      <h1 class="title">Reconstrucción de DLHM</h1>
+    </header>
+    <main>
+      <div class="image">
+        <img src="{{ url_for('video_feed') }}" />
+      </div>
+      <div class="buttons">
+        <button
+          onclick="window.location.href = 'http://localhost:5000/'"
+          class="btn"
+        >
+          Regresar
+        </button>
+      </div>
+    </main>
+  </body>
+  <script src="{{ url_for('static',filename='scripts/mainPage.js') }}"></script>
+</html>
