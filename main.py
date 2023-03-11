@@ -1,6 +1,7 @@
 #-----------------------Librerías----------------------------
 # Librerias para streaming
-from flask import Flask, render_template, Response
+from flask import Flask, render_template, Response, request
+from threading import Thread
 
 # Librerias para procesamiento de imagenes
 import numpy as np
@@ -17,12 +18,15 @@ def apply_fourier_transform(frame):
     # Convertimos la imagen a escala de grises
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     
-    # Aplicamos la transformada de Fourier
+    # Aplicamos la transformada de Fourier a la imagen en escala de grises
     f = fft2(gray)
     fshift = fftshift(f)
     magnitude_spectrum = 20*np.log(np.abs(fshift))
     
-    return magnitude_spectrum
+    # Convertimos la imagen de escala de grises en una imagen RGB
+    magnitude_spectrum_rgb = cv2.cvtColor(cv2.convertScaleAbs(magnitude_spectrum), cv2.COLOR_GRAY2RGB)
+    
+    return magnitude_spectrum_rgb
 
 # Agrega ejes coordenados a la imagen
 # INPUT:
@@ -69,7 +73,7 @@ def codeImage(image):
 # INPUT
 # transform: Función que modifica la imagen según las necesidades 
 # OUTPUT: String de respuesta con la imagen codificada
-def generate(transform = lambda x:x):
+def generate(*transforms):
     cap = cv2.VideoCapture(0)
     # Verificar si la cámara se ha abierto correctamente
     if not cap.isOpened():
@@ -84,11 +88,31 @@ def generate(transform = lambda x:x):
             cap = cv2.VideoCapture(0)
             succes, frame = cap.read()
         
-        final_frame = transform(frame)
+        # Aplicamos las transformaciones pertinentes
+        final_frame = frame
+        for transform in transforms:
+            final_frame = transform(final_frame)
 
         yield codeImage(final_frame)
 
-        
+def draw_circle(img):
+    global radio,x,y, drawCircle
+
+    result = img
+    if drawCircle:
+        result = cv2.circle(img, (x,y), radio, (0,0,255), thickness = 2)
+    return result
+
+#-----------------------Hilos----------------------------
+#Creamos un hilo que se encargue del procesamiento del video
+
+# Crear una instancia de Thread para la función generate()
+thread = Thread(target=generate)
+thread.daemon = True
+thread.start()
+
+#-----------------------Variables globales----------------------------
+radio,x,y, drawCircle = (0,0,0, False)
 
 #-----------------------Flask enrutado----------------------------
 app = Flask(__name__)
@@ -97,9 +121,18 @@ app = Flask(__name__)
 def index():
      return render_template("index.html")
 
+@app.route("/add_circle")
+def add_circle():
+    global radio,x,y, drawCircle
+    drawCircle = True
+    radio = int(request.args.get('radio', 0))
+    x = int(request.args.get('x', 0))
+    y = int(request.args.get('y', 0))
+    return Response('OK')
+
 @app.route("/video_feed")
 def video_feed():
-    return Response(generate(add_coordinate_axes), mimetype='multipart/x-mixed-replace; boundary=frame')
+    return Response(generate( draw_circle ,add_coordinate_axes), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 #-----------------------Corremos el servidor----------------------------
 if __name__ == "__main__":
