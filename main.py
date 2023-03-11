@@ -95,6 +95,33 @@ def generate(*transforms):
 
         yield codeImage(final_frame)
 
+# Reconstruye el holograma 
+# INPUT:
+# image: imagen del microscopio sin transformaciones
+# OUPUT:
+# Reconstrucción del holograma en formato de imagen de cv2
+def apply_DLHM_reconstruction(img):
+    global x,y, radio
+    #-------------Aplicar FFT-----------------
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # Pasamos a escala de grises
+    f = fft2(gray)
+    fshift = fftshift(f)
+
+    #-------------Aplicar máscara circular----------
+    mask = np.zeros(fshift.shape)
+    mask = cv2.circle(mask,(x,y), radio, (1,1,1), -1)
+    # Desplazar espectro
+    # Invertir FFT
+    # Convertir a imagen RGB
+    # magnitude_spectrum_rgb = cv2.cvtColor(cv2.convertScaleAbs(magnitude_spectrum), cv2.COLOR_GRAY2RGB)
+
+    return gray*mask
+# -----NO ES FUNCIÓN PURA, USA VARIABLES GLOBALES ----------
+# Dibuja un circulo si las variables globales lo permiten 
+# INPUT:
+# image: imagen a dibujar
+# OUPUT:
+# Imagen con el circulo dibujado según las variables globales
 def draw_circle(img):
     global radio,x,y, drawCircle
 
@@ -134,10 +161,14 @@ def add_circle():
     y = int(request.args.get('y', 0))
     return Response('OK')
 
-@app.route("/video_feed")
-def video_feed():
-    return Response(generate( draw_circle ,add_coordinate_axes), mimetype='multipart/x-mixed-replace; boundary=frame')
-
+@app.route("/video_feed/<string:type>")
+def video_feed(type):
+    if type == "config":
+        return Response(generate( apply_fourier_transform, draw_circle ,add_coordinate_axes), mimetype='multipart/x-mixed-replace; boundary=frame')
+    elif type == "reconstruction":
+        return Response(generate( apply_DLHM_reconstruction), mimetype='multipart/x-mixed-replace; boundary=frame')
+    else:
+        return Response(generate(), mimetype='multipart/x-mixed-replace; boundary=frame')
 #-----------------------Corremos el servidor----------------------------
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0')
