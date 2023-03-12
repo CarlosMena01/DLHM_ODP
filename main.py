@@ -69,31 +69,34 @@ def codeImage(image):
         bytearray(encodedImage) + b'\r\n')
 
 # Genera continuamente una respuesta basada en la imagen de la cámara y aplica 
-# una determinada transformación a la imagen
+# determinadas transformaciones a la imagen
 # INPUT
-# transform: Función que modifica la imagen según las necesidades 
+# *transforms: Función que modifica la imagen según las necesidades y debe retornar imagen rgb 
 # OUTPUT: String de respuesta con la imagen codificada
 def generate(*transforms):
     cap = cv2.VideoCapture(0)
-    # Verificar si la cámara se ha abierto correctamente
-    if not cap.isOpened():
-        print("Error al abrir la cámara")
-        exit()
+    try:
+        # Verificar si la cámara se ha abierto correctamente
+        if not cap.isOpened():
+            print("Error al abrir la cámara")
+            exit()
 
-    while True:
-        succes, frame = cap.read()
-        # Re intentamos obtener la imagen en caso de fallar
-        while not succes:
-            print("La cámará no se pudo abrir, re intentado ...")
-            cap = cv2.VideoCapture(0)
+        while True:
             succes, frame = cap.read()
-        
-        # Aplicamos las transformaciones pertinentes
-        final_frame = frame
-        for transform in transforms:
-            final_frame = transform(final_frame)
+            # Re intentamos obtener la imagen en caso de fallar
+            while not succes:
+                print("La cámará no se pudo abrir, re intentado ...")
+                cap = cv2.VideoCapture(0)
+                succes, frame = cap.read()
+            
+            # Aplicamos las transformaciones pertinentes
+            final_frame = frame
+            for transform in transforms:
+                final_frame = transform(final_frame)
 
-        yield codeImage(final_frame)
+            yield codeImage(final_frame)
+    finally:
+        cap.release()
 
 # Reconstruye el holograma 
 # INPUT:
@@ -139,6 +142,7 @@ def apply_DLHM_reconstruction(img):
     result = cv2.cvtColor(cv2.convertScaleAbs(np.abs(result)), cv2.COLOR_GRAY2RGB)
 
     return result
+
 # -----NO ES FUNCIÓN PURA, USA VARIABLES GLOBALES ----------
 # Dibuja un circulo si las variables globales lo permiten 
 # INPUT:
