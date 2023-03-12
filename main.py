@@ -5,7 +5,7 @@ from threading import Thread
 
 # Librerias para procesamiento de imagenes
 import numpy as np
-from scipy.fftpack import fft2, fftshift
+from scipy.fftpack import fft2, fftshift, ifft2
 import cv2
 
 #-----------------------Funciones----------------------------
@@ -110,12 +110,35 @@ def apply_DLHM_reconstruction(img):
     #-------------Aplicar máscara circular----------
     mask = np.zeros(fshift.shape)
     mask = cv2.circle(mask,(x,y), radio, (1,1,1), -1)
-    # Desplazar espectro
-    # Invertir FFT
-    # Convertir a imagen RGB
-    # magnitude_spectrum_rgb = cv2.cvtColor(cv2.convertScaleAbs(magnitude_spectrum), cv2.COLOR_GRAY2RGB)
 
-    return gray*mask
+    img_filter = fshift*mask
+
+    # ----------Desplazar espectro----------
+    img_filter = img_filter.astype(np.complex128) # Aseguramos el tipo de la imagen
+
+    # Obtener dimensiones de la imagen
+    alto, ancho = img_filter.shape[:2]
+
+    # Definir matriz de transformación
+    M = np.float32([[1, 0, ancho//2 - x], [0, 1, alto//2 - y]]) # Desplazamos a la mitad de la imagen
+
+    # Dividir imagen en sus partes real e imaginaria
+    real = np.real(img_filter)
+    imag = np.imag(img_filter)
+
+    # Aplicar transformación a partes real e imaginaria
+    real_desplazada = cv2.warpAffine(real, M, (ancho, alto))
+    imag_desplazada = cv2.warpAffine(imag, M, (ancho, alto))
+
+    # Combinar partes real e imaginaria en una imagen compleja
+    result = real_desplazada + 1j*imag_desplazada
+    # Invertir FFT
+    result = ifft2(result)
+
+    # Convertir a imagen RGB
+    result = cv2.cvtColor(cv2.convertScaleAbs(np.abs(result)), cv2.COLOR_GRAY2RGB)
+
+    return result
 # -----NO ES FUNCIÓN PURA, USA VARIABLES GLOBALES ----------
 # Dibuja un circulo si las variables globales lo permiten 
 # INPUT:
