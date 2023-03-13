@@ -5,7 +5,7 @@ from threading import Thread
 
 # Librerias para procesamiento de imagenes
 import numpy as np
-from scipy.fftpack import fft2, fftshift, ifft2
+from numpy.fft import fft2, fftshift, ifft2
 import cv2
 
 #-----------------------Funciones----------------------------
