@@ -103,7 +103,7 @@ def generate(*transforms):
 # image: imagen del microscopio sin transformaciones
 # OUPUT:
 # Reconstrucción del holograma en formato de imagen de cv2
-def apply_DLHM_reconstruction(img):
+def apply_DHM_reconstruction(img):
     global x,y, radio
     #-------------Aplicar FFT-----------------
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # Pasamos a escala de grises
@@ -157,6 +157,25 @@ def draw_circle(img):
         result = cv2.circle(img, (x,y), radio, (0,0,255), thickness = 2)
     return result
 
+# Administra cómo se aplican una serie de transformaciones
+# Inputs:
+# circle,fourier,reconstruction,cuadricula: Booleanos según si se desea plicar o no una
+# transformación 
+# Output: Array con las trasnformaciones corresoindientes
+
+def manger_transforms(circle,fourier,reconstruction,cuadricula):
+    transforms = []
+    if circle:
+        transforms.append(draw_circle)
+    if fourier:
+        transforms.append(apply_fourier_transform)
+    if reconstruction:
+        transforms = [] # Si se aplica la reconstrucción se elimina el circulo y la transformada
+        transforms.append(apply_DHM_reconstruction)
+    if cuadricula:
+        transforms.append(add_coordinate_axes)
+    return transforms
+
 #-----------------------Hilos----------------------------
 #Creamos un hilo que se encargue del procesamiento del video
 
@@ -184,14 +203,13 @@ def add_circle():
     y = int(request.args.get('y', 0))
     return Response('OK')
 
-@app.route("/video_feed/<string:type>")
-def video_feed(type):
-    if type == "config":
-        return Response(generate( apply_fourier_transform, draw_circle ,add_coordinate_axes), mimetype='multipart/x-mixed-replace; boundary=frame')
-    elif type == "reconstruction":
-        return Response(generate( apply_DLHM_reconstruction), mimetype='multipart/x-mixed-replace; boundary=frame')
-    else:
-        return Response(generate(), mimetype='multipart/x-mixed-replace; boundary=frame')
+@app.route("/video_feed")
+def video_feed():
+    circle = bool(request.args.get('circle', False))
+    fourier = bool(request.args.get('fourier', False))
+    reconstruction = bool(request.args.get('reconstruction', False))
+    cuadricula = bool(request.args.get('cuadricula', False))
+    return Response(generate(*manger_transforms(circle,fourier,reconstruction,cuadricula)), mimetype='multipart/x-mixed-replace; boundary=frame')
 #-----------------------Corremos el servidor----------------------------
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0')
