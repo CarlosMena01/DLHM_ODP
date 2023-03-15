@@ -22,44 +22,39 @@
   </head>
   <body class="container">
     <header>
-      <h1 class="title">Reconstrucción de DLHM</h1>
+      <h1 class="title">Reconstrucción de DHM</h1>
     </header>
     <main>
       <div class="left-container">
-        <div class="image">
-          <h3>Espectro</h3>
-          <img src="{{ url_for('video_feed', type='config') }}" />
-        </div>
-        <div class="inputs">
-          <div class="coordenates">
-            <div class="input-container">
-              <label for="CX">Coordenada X</label>
-              <input type="number" name="CoordenadaX" id="CX" />
-            </div>
-            <div class="input-container">
-              <label for="CY">Coordenada Y</label>
-              <input type="number" name="CoordenadaY" id="CY" />
-            </div>
-          </div>
-          <div class="radio">
-            <div class="input-container">
-              <label for="Radio">Radio</label>
-              <input type="number" name="Radio" id="Radio" />
-            </div>
-          </div>
-        </div>
+        <img src="{{ url_for('video_feed', type='config') }}" />
       </div>
       <div class="right-container">
-        <div class="reference">
-          <button class="btn cap">
-            Capturar <br />
-            referencia
-          </button>
+        <div class="form">
+          <div class="input">
+            <label for="x">Coordenada X:</label>
+            <input type="number" id="x" name="x" />
+          </div>
+          <div class="input">
+            <label for="y">Coordenada Y:</label>
+            <input type="number" id="y" name="y" />
+          </div>
+          <div class="input">
+            <label for="radius">Radio:</label>
+            <input type="number" id="radius" name="radius" />
+          </div>
         </div>
-        <div class="reconstruction">
-          <button onclick="watchCircle()" class="btn cir">Ver círculo</button>
-          <button onclick="openReconstruction()" class="btn holo">
-            Reconstrir Holograma
+        <div class="buttons">
+          <button id="submit-button" onclick="submitCoords()">
+            Ver círculo
+          </button>
+          <button id="grid-button" onclick="toggleGrid()">
+            Mostrar/ocultar cuadrícula
+          </button>
+          <button id="fft-button" onclick="toggleFFT()">
+            Aplicar/No aplicar FFT
+          </button>
+          <button id="main-button" onclick="reconstruction()">
+            Reconstruir holograma
           </button>
         </div>
       </div>
