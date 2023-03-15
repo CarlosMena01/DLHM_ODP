@@ -175,10 +175,6 @@ app = Flask(__name__)
 def index():
      return render_template("index.html")
 
-@app.route("/reconstruction")
-def reconstruction():
-     return render_template("reconstruction.html")
-
 @app.route("/add_circle")
 def add_circle():
     global radio,x,y, drawCircle
