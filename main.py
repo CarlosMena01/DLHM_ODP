@@ -176,6 +176,13 @@ def manger_transforms(circle,fourier,reconstruction,cuadricula):
         transforms.append(add_coordinate_axes)
     return transforms
 
+# Toma un string y si tiene el valor "True" retorna verdadero
+# Input: str: string con el valor a evaluar
+# Output: booleano con la comparación
+def str2bool(str):
+    if str == "True":
+        return True
+    return False    
 #-----------------------Hilos----------------------------
 #Creamos un hilo que se encargue del procesamiento del video
 
@@ -205,10 +212,10 @@ def add_circle():
 
 @app.route("/video_feed")
 def video_feed():
-    circle = bool(request.args.get('circle', False))
-    fourier = bool(request.args.get('fourier', False))
-    reconstruction = bool(request.args.get('reconstruction', False))
-    cuadricula = bool(request.args.get('cuadricula', False))
+    circle = str2bool(request.args.get('circle', False))
+    fourier = str2bool(request.args.get('fourier', False))
+    reconstruction = str2bool(request.args.get('reconstruction', False))
+    cuadricula = str2bool(request.args.get('cuadricula', False))
     return Response(generate(*manger_transforms(circle,fourier,reconstruction,cuadricula)), mimetype='multipart/x-mixed-replace; boundary=frame')
 #-----------------------Corremos el servidor----------------------------
 if __name__ == "__main__":
