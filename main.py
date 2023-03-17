@@ -8,12 +8,28 @@ import numpy as np
 from scipy.fftpack import fft2, fftshift, ifft2
 import cv2
 
+#-----------------------Variables globales----------------------------
+radio,x,y = (0,0,0)
+state = {"circle": False, "fourier": False, "reconstruction": False, "grid": False }
+
+#---------------------Decoradores-----------------------------
+def validation_transform(condition):
+    def validate_function(transform):
+        global state
+        def new_function(image):
+            if state[condition]:
+                return transform(image)
+            else:
+                return image
+        return new_function
+    return validate_function
+
 #-----------------------Funciones----------------------------
 # Aplica FFT
 # INPUT
 # frame: Imagen a la cual se le aplica su transformada 
 # OUTPUT: Otra imagen en escala de grises con la magnitud de la FFT
-
+@validation_transform("fourier")
 def apply_fourier_transform(frame):
     # Convertimos la imagen a escala de grises
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -32,6 +48,7 @@ def apply_fourier_transform(frame):
 # INPUT:
 # img: Imagen a la cual se le agregan los ejes
 # OUTPUT: Otra imagen con los ejes superpuestos
+@validation_transform("grid")
 def add_coordinate_axes(img):
     # Obtener las dimensiones de la imagen
     height, width, channels = img.shape
@@ -103,6 +120,7 @@ def generate(*transforms):
 # image: imagen del microscopio sin transformaciones
 # OUPUT:
 # Reconstrucción del holograma en formato de imagen de cv2
+@validation_transform("reconstruction")
 def apply_DHM_reconstruction(img):
     global x,y, radio
     #-------------Aplicar FFT-----------------
@@ -149,32 +167,11 @@ def apply_DHM_reconstruction(img):
 # image: imagen a dibujar
 # OUPUT:
 # Imagen con el circulo dibujado según las variables globales
+@validation_transform("circle")
 def draw_circle(img):
-    global radio,x,y, drawCircle
-
-    result = img
-    if drawCircle:
-        result = cv2.circle(img, (x,y), radio, (0,0,255), thickness = 2)
+    global radio,x,y
+    result = cv2.circle(img, (x,y), radio, (0,0,255), thickness = 2)
     return result
-
-# Administra cómo se aplican una serie de transformaciones
-# Inputs:
-# circle,fourier,reconstruction,cuadricula: Booleanos según si se desea plicar o no una
-# transformación 
-# Output: Array con las trasnformaciones corresoindientes
-
-def manger_transforms(circle,fourier,reconstruction,cuadricula):
-    transforms = []
-    if circle:
-        transforms.append(draw_circle)
-    if fourier:
-        transforms.append(apply_fourier_transform)
-    if reconstruction:
-        transforms = [] # Si se aplica la reconstrucción se elimina el circulo y la transformada
-        transforms.append(apply_DHM_reconstruction)
-    if cuadricula:
-        transforms.append(add_coordinate_axes)
-    return transforms
 
 # Toma un string y si tiene el valor "True" retorna verdadero
 # Input: str: string con el valor a evaluar
@@ -191,9 +188,6 @@ thread = Thread(target=generate)
 thread.daemon = True
 thread.start()
 
-#-----------------------Variables globales----------------------------
-radio,x,y, drawCircle = (0,0,0, False)
-
 #-----------------------Flask enrutado----------------------------
 app = Flask(__name__)
 
@@ -203,20 +197,25 @@ def index():
 
 @app.route("/add_circle")
 def add_circle():
-    global radio,x,y, drawCircle
-    drawCircle = True
+    global radio,x,y
     radio = int(request.args.get('radio', 0))
     x = int(request.args.get('x', 0))
     y = int(request.args.get('y', 0))
     return Response('OK')
 
+@app.route("/config_state")
+def config_state():
+    global state
+    state["circle"]          = str2bool(request.args.get('circle', False))
+    state["fourier"]         = str2bool(request.args.get('fourier', False))
+    state["reconstruction"]  = str2bool(request.args.get('reconstruction', False))
+    state["grid"]            = str2bool(request.args.get('grid', False))
+
+    return Response('OK')
+
 @app.route("/video_feed")
 def video_feed():
-    circle = str2bool(request.args.get('circle', False))
-    fourier = str2bool(request.args.get('fourier', False))
-    reconstruction = str2bool(request.args.get('reconstruction', False))
-    cuadricula = str2bool(request.args.get('cuadricula', False))
-    return Response(generate(*manger_transforms(circle,fourier,reconstruction,cuadricula)), mimetype='multipart/x-mixed-replace; boundary=frame')
+    return Response(generate(apply_fourier_transform, draw_circle, apply_fourier_transform, add_coordinate_axes), mimetype='multipart/x-mixed-replace; boundary=frame')
 #-----------------------Corremos el servidor----------------------------
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0')
