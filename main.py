@@ -215,7 +215,7 @@ def config_state():
 
 @app.route("/video_feed")
 def video_feed():
-    return Response(generate(apply_fourier_transform, draw_circle, apply_fourier_transform, add_coordinate_axes), mimetype='multipart/x-mixed-replace; boundary=frame')
+    return Response(generate(apply_fourier_transform, draw_circle, apply_DHM_reconstruction, add_coordinate_axes), mimetype='multipart/x-mixed-replace; boundary=frame')
 #-----------------------Corremos el servidor----------------------------
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0')
