@@ -26,7 +26,10 @@
     </header>
     <main>
       <div class="left-container">
-        <img src="{{url_for('video_feed')}}" />
+        <div class="superposition">
+          <canvas id="mainCanvas"></canvas>
+          <img src="{{url_for('video_feed')}}" />
+        </div>
       </div>
       <div class="right-container">
         <div class="form">
