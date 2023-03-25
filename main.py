@@ -177,7 +177,7 @@ def draw_circle(img):
 # Input: str: string con el valor a evaluar
 # Output: booleano con la comparación
 def str2bool(str):
-    if str == "True":
+    if str.lower() == "true":
         return True
     return False    
 #-----------------------Hilos----------------------------
