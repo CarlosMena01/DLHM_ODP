@@ -26,6 +26,15 @@ function submitCoords() {
   url.searchParams.set("y", y);
 
   fetch(url);
+
+  // Watch circle
+  reconstruction = "False";
+  if (circle === "False") {
+    circle = "True";
+  } else {
+    circle = "False";
+  }
+  updateState();
 }
 
 function toggleGrid() {
@@ -39,7 +48,6 @@ function toggleGrid() {
 }
 
 function toggleFFT() {
-  circle = "True";
   reconstruction = "False";
   if (fourier === "False") {
     fourier = "True";
