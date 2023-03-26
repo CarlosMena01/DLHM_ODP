@@ -14,10 +14,10 @@ sliderTime.oninput = function () {
 const sliderGain = document.getElementById("gain");
 const gainValue = document.getElementById("gain-value");
 
-gainValue.innerHTML = sliderGain.value;
+gainValue.innerHTML = parseFloat(sliderGain.value) / 100;
 
 sliderGain.oninput = function () {
-  gainValue.innerHTML = this.value;
+  gainValue.innerHTML = parseFloat(this.value) / 100;
 };
 
 /*----------------------CANVAS READING-------------- */
