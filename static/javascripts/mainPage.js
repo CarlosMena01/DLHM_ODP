@@ -110,13 +110,13 @@ async function toggleFFT() {
 }
 
 // Maneja la acción de iniciar la reconstrucción
-async function reconstructionStart() {
+async function toggleReconstruction() {
   // Limpiar el canvas
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   state.circle = false;
   state.fourier = false;
   state.grid = false;
-  state.reconstruction = true;
+  state.reconstruction = state.reconstruction ? false : true;
   await updateState();
 }
