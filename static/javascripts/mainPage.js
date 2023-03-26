@@ -1,3 +1,25 @@
+/*-----------------------Sliders readin------------*/
+
+// Tiempo de exposición
+const sliderTime = document.getElementById("time");
+const timeValue = document.getElementById("time-value");
+
+timeValue.innerHTML = sliderTime.value;
+
+sliderTime.oninput = function () {
+  timeValue.innerHTML = this.value;
+};
+
+// Ganancia
+const sliderGain = document.getElementById("gain");
+const gainValue = document.getElementById("gain-value");
+
+gainValue.innerHTML = sliderGain.value;
+
+sliderGain.oninput = function () {
+  gainValue.innerHTML = this.value;
+};
+
 /*----------------------CANVAS READING-------------- */
 const canvas = document.getElementById("mainCanvas");
 const ctx = canvas.getContext("2d");

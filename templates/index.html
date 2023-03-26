@@ -35,18 +35,32 @@
         <div class="information"></div>
         <div class="sliders">
           <div class="slidecontainer">
-            <h1>
-              Tiempo de exposición:
-              <p id="time-value">50</p>
-            </h1>
-            <input
-              type="range"
-              min="1"
-              max="100"
-              value="50"
-              class="slider"
-              id="myRange"
-            />
+            <label for="time"> Tiempo de exposición: </label>
+            <div class="slider-value">
+              <input
+                type="range"
+                min="1"
+                max="100"
+                value="50"
+                class="slider"
+                id="time"
+              />
+              <span id="time-value">50</span>
+            </div>
+          </div>
+          <div class="slidecontainer">
+            <label for="gain"> Ganancia: </label>
+            <div class="slider-value">
+              <input
+                type="range"
+                min="1"
+                max="100"
+                value="50"
+                class="slider"
+                id="gain"
+              />
+              <span id="gain-value">50</span>
+            </div>
           </div>
         </div>
 
