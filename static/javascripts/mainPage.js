@@ -5,6 +5,7 @@ const ctx = canvas.getContext("2d");
 let isDrawing = false;
 let centerX;
 let centerY;
+let radius;
 // Utiliza la función getCanvasPosition para obtener la posición absoluta del canvas
 let canvasPosition = getCanvasPosition(canvas);
 
@@ -35,7 +36,7 @@ canvas.addEventListener("mousemove", function (event) {
     console.log(centerX);
     const radiusX = Math.abs(event.clientX - canvasPosition.x - centerX);
     const radiusY = Math.abs(event.clientY - canvasPosition.y - centerY);
-    const radius = Math.min(radiusX, radiusY);
+    radius = Math.sqrt(radiusX ** 2 + radiusY ** 2);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawCircle(centerX, centerY, radius);
   }
@@ -43,6 +44,7 @@ canvas.addEventListener("mousemove", function (event) {
 
 canvas.addEventListener("mouseup", function (event) {
   isDrawing = false;
+  submitCoords(); // Enviamos los datos al servidor
 });
 
 function drawCircle(centerX, centerY, radius) {
@@ -84,21 +86,13 @@ async function updateState() {
 
 // Maneja la acción de enviar las coordenadas de un círculo al servidor
 async function submitCoords() {
-  const x = document.getElementById("x").value;
-  const y = document.getElementById("y").value;
-  const radio = document.getElementById("radius").value;
-
+  // Construir la URL
   const url = createURL("/add_circle");
-  url.searchParams.set("radio", radio);
-  url.searchParams.set("x", x);
-  url.searchParams.set("y", y);
+  url.searchParams.set("radio", parseInt(radius));
+  url.searchParams.set("x", parseInt(centerX));
+  url.searchParams.set("y", parseInt(centerY));
 
   await fetch(url);
-
-  // Actualiza el estado de la aplicación
-  state.reconstruction = false;
-  state.circle = state.circle ? false : true;
-  await updateState();
 }
 
 // Maneja la acción de mostrar u ocultar la cuadrícula
@@ -117,6 +111,9 @@ async function toggleFFT() {
 
 // Maneja la acción de iniciar la reconstrucción
 async function reconstructionStart() {
+  // Limpiar el canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
   state.circle = false;
   state.fourier = false;
   state.grid = false;

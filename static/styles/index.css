@@ -71,47 +71,13 @@ main .left-container .superposition image {
 
 /* Derecha */
 
-/* Formulario */
-
-main .right-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-main .right-container .form {
-  height: 40%;
-  margin-right: 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-}
-
-main .right-container .form .input {
-  display: flex;
-  justify-content: space-between;
-}
-
-/* Entradas de números */
-input[type="number"] {
-  padding: 10px;
-  border-radius: 5px;
-  border: none;
-  font-size: 16px;
-}
-
-/* Etiquetas de entradas */
-label {
-  margin: 10px;
-  font-size: 16px;
-  font-weight: bold;
-}
-
+/* Botones */
 main .right-container .buttons {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
-/* Botones */
+
 button {
   background-color: var(--ligth-color);
   color: white;
