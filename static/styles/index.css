@@ -2,7 +2,7 @@
 :root {
   --main-color: #6f27c2;
   --second-color: rgba(140, 48, 245, 0.44);
-  --ligth-color: #9666cc;
+  --light-color: #9666cc;
   --anit-ligth-color: #f4a0f4;
 }
 
@@ -138,7 +138,7 @@ main .right-container .buttons {
 }
 
 button {
-  background-color: var(--ligth-color);
+  background-color: var(--light-color);
   color: white;
   border: none;
   padding: 10px 20px;
@@ -157,10 +157,33 @@ button:active {
   transform: translateY(1px); /* Hacemos un pequeño movimiento hacia abajo */
 }
 
-/* Estilos específicos para los botones */
-#main-button {
-  background-color: var(--main-color);
+/* Botón de reconstrucción */
+/* Estilos para el contenedor */
+.button-select {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 80% 10%;
 }
-#main-button:hover {
-  background-color: var(--second-color);
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  z-index: 1;
+  bottom: 100%;
+  right: 0;
+}
+
+.dropdown-content.show {
+  display: block;
+}
+
+.dropdown-content button {
+  width: 100%;
+}
+.option-btn {
+  background-color: #4421d9;
 }
