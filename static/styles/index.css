@@ -72,27 +72,31 @@ main .left-container .superposition image {
 /* Derecha */
 main .right-container {
   display: grid;
-  grid-template-rows: 20% 40% 40%;
+  grid-template-rows: 40% 40%;
+
+  margin-right: 50px;
+  margin-top: 50px;
 }
 
 /* Sliders */
 main .right-container .sliders {
-  margin-right: 10px;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
+
+  margin-bottom: 50px;
 }
 main .right-container .sliders .slidecontainer {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  height: 7vh;
+  justify-content: space-around;
+  height: 10vh;
 }
 main .right-container .sliders .slidecontainer .slider-value {
   width: 100%;
-  display: grid;
-  grid-template-columns: 90% 10%;
+  display: flex;
+  justify-content: space-around;
 }
 /* Etiquetas de entradas */
 label,
