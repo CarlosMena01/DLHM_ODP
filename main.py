@@ -8,6 +8,9 @@ import numpy as np
 from scipy.fftpack import fft2, fftshift, ifft2
 import cv2
 
+# Librerías de manejo de tiempo
+import time
+
 #-----------------------Variables globales----------------------------
 radio,x,y = (0,0,0)
 state = {"circle": False, "fourier": False, "reconstruction": False, "grid": False }
@@ -99,6 +102,9 @@ def generate(*transforms):
             exit()
 
         while True:
+            # Definimos el tiempo de inicio
+            start_time = time.time()
+            # Capturamos la imagen de la cámara
             succes, frame = cap.read()
             # Re intentamos obtener la imagen en caso de fallar
             while not succes:
@@ -110,6 +116,10 @@ def generate(*transforms):
             final_frame = frame
             for transform in transforms:
                 final_frame = transform(final_frame)
+
+            # Escribimos los FPS sobre la imagen
+            fps = int(1.0 / (time.time() - start_time))
+            cv2.putText(final_frame, "FPS: {:n}".format(fps), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
 
             yield codeImage(final_frame)
     finally:
