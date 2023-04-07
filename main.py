@@ -133,7 +133,7 @@ def generate(*transforms):
 # Reconstrucción del holograma en formato de imagen de cv2
 @validation_transform("reconstruction")
 def apply_DHM_reconstruction(img):
-    global x,y, radio
+    global x,y, radio, reconstructionMode
     #-------------Aplicar FFT-----------------
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # Pasamos a escala de grises
     f = fft2(gray)
@@ -167,8 +167,17 @@ def apply_DHM_reconstruction(img):
     # Invertir FFT
     result = ifft2(result)
 
-    # Convertir a imagen RGB
-    result = cv2.cvtColor(cv2.convertScaleAbs(np.abs(result)), cv2.COLOR_GRAY2RGB)
+    # Convertir a imagen RGB según el modo que corresponda
+    if (reconstructionMode =='intensity'):
+        result = result/255
+        result = np.abs(result)**2
+        result = result*255
+    elif (reconstructionMode =='phase'):
+        result=np.angle(result)
+    elif (reconstructionMode =='amplitude'):
+        result=np.abs(result)
+        
+    result = cv2.cvtColor(cv2.convertScaleAbs(result), cv2.COLOR_GRAY2RGB)
 
     return result
 
