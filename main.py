@@ -14,6 +14,7 @@ import time
 #-----------------------Variables globales----------------------------
 radio,x,y = (0,0,0)
 state = {"circle": False, "fourier": False, "reconstruction": False, "grid": False }
+reconstructionMode = "intensity"
 
 #---------------------Decoradores-----------------------------
 def validation_transform(condition):
@@ -211,6 +212,20 @@ def add_circle():
     radio = int(request.args.get('radio', 0))
     x = int(request.args.get('x', 0))
     y = int(request.args.get('y', 0))
+    return Response('OK')
+
+@app.route("/config_reconstruction")
+def config_reconstruction():
+    global reconstructionMode
+    mode = request.args.get('mode', "") # Variable temporal
+    if (mode.lower() == 'intensity'):
+        reconstructionMode = 'intensity'
+    elif (mode.lower() == 'phase'):
+        reconstructionMode = 'phase'
+    elif (mode.lower() == 'amplitude'):
+        reconstructionMode = 'amplitude'
+    else:
+        return Response('NO WORK')
     return Response('OK')
 
 @app.route("/config_state")
