@@ -1,3 +1,49 @@
+/*---------------------Botón de reconstrucción------------*/
+// Obtenemos los elementos que necesitamos
+const reconstructionBtn = document.getElementById("main-btn-reconstruction");
+const phaseBtn = document.getElementById("phase-btn");
+const amplitudeBtn = document.getElementById("amplitude-btn");
+const intenistyBtn = document.getElementById("intenisty-btn");
+const dropdown = document.querySelector(".dropdown");
+const dropdownContent = document.querySelector(".dropdown-content");
+
+// Variable global para el modo de la reconstrucción
+var modeReconstruction = "instenisty";
+
+// Añadimos eventos a los botones
+phaseBtn.addEventListener("click", function () {
+  modeReconstruction = "phase";
+  reconstructionMode();
+  reconstructionBtn.textContent = "Reconstruir fase";
+  dropdownContent.classList.remove("show");
+});
+
+amplitudeBtn.addEventListener("click", function () {
+  modeReconstruction = "amplitude";
+  reconstructionMode();
+  reconstructionBtn.textContent = "Reconstruir amplitud";
+  dropdownContent.classList.remove("show");
+});
+
+intenistyBtn.addEventListener("click", function () {
+  modeReconstruction = "intensity";
+  reconstructionMode();
+  reconstructionBtn.textContent = "Reconstruir intensidad";
+  dropdownContent.classList.remove("show");
+});
+
+// Añadimos un evento al botón del menú desplegable para mostrar y ocultar el menú
+dropdown.addEventListener("click", function () {
+  dropdownContent.classList.toggle("show");
+});
+
+// Añadimos un evento al documento para cerrar el menú desplegable cuando se hace clic fuera de él
+document.addEventListener("click", function (event) {
+  if (!event.target.closest(".dropdown")) {
+    dropdownContent.classList.remove("show");
+  }
+});
+
 /*-----------------------Sliders readin------------*/
 
 // Tiempo de exposición
@@ -105,6 +151,12 @@ async function updateState() {
   const url = createURL("/config_state");
   await fetch(url);
 }
+// Actualiza el modo para la reconstrucción
+async function reconstructionMode() {
+  const url = new URL(state.root + "/config_reconstruction");
+  url.searchParams.set("mode", modeReconstruction);
+  await fetch(url);
+}
 
 // Maneja la acción de enviar las coordenadas de un círculo al servidor
 async function submitCoords() {
@@ -142,40 +194,3 @@ async function toggleReconstruction() {
   state.reconstruction = state.reconstruction ? false : true;
   await updateState();
 }
-
-/*---------------------Botón de reconstrucción------------*/
-// Obtenemos los elementos que necesitamos
-const reconstructionBtn = document.getElementById("main-btn-reconstruction");
-const phaseBtn = document.getElementById("phase-btn");
-const amplitudeBtn = document.getElementById("amplitude-btn");
-const intenistyBtn = document.getElementById("intenisty-btn");
-const dropdown = document.querySelector(".dropdown");
-const dropdownContent = document.querySelector(".dropdown-content");
-
-// Añadimos eventos a los botones
-phaseBtn.addEventListener("click", function () {
-  reconstructionBtn.textContent = "Reconstruir fase";
-  dropdownContent.classList.remove("show");
-});
-
-amplitudeBtn.addEventListener("click", function () {
-  reconstructionBtn.textContent = "Reconstruir amplitud";
-  dropdownContent.classList.remove("show");
-});
-
-intenistyBtn.addEventListener("click", function () {
-  reconstructionBtn.textContent = "Reconstruir intensidad";
-  dropdownContent.classList.remove("show");
-});
-
-// Añadimos un evento al botón del menú desplegable para mostrar y ocultar el menú
-dropdown.addEventListener("click", function () {
-  dropdownContent.classList.toggle("show");
-});
-
-// Añadimos un evento al documento para cerrar el menú desplegable cuando se hace clic fuera de él
-document.addEventListener("click", function (event) {
-  if (!event.target.closest(".dropdown")) {
-    dropdownContent.classList.remove("show");
-  }
-});
