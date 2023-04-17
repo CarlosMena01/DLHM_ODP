@@ -15,6 +15,7 @@ import time
 radio,x,y = (0,0,0)
 state = {"circle": False, "fourier": False, "reconstruction": False, "grid": False }
 reconstructionMode = "intensity"
+cameraConfig = {"exposure": 50, "gain": 1, "width": 640, "height": 480, "flag": True}
 
 #---------------------Decoradores-----------------------------
 def validation_transform(condition):
@@ -89,6 +90,24 @@ def codeImage(image):
     return (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' +
         bytearray(encodedImage) + b'\r\n')
 
+# Configura la cámara según los parámetros establecidos
+# INPUT 
+# cap: instancia de la cámara a configurar
+# OUTPUT Void
+def configCamera(cap):
+    global cameraConfig
+    if(cameraConfig["flag"]):
+        # Se configura el tamaño de la cámara
+        cap.set(cv2.CAP_PROP_FRAME_WIDTH, cameraConfig["width"])
+        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, cameraConfig["height"])
+
+        # Se configura el tiempo de exposición
+        cap.set(cv2.CAP_PROP_AUTO_EXPOSURE, 0.75) # Se desactiva el modo automatico
+        cap.set(cv2.CAP_PROP_EXPOSURE, cameraConfig["exposure"])
+        
+        # Evitamos que se vuelva a configurar cada que se entre
+        cameraConfig["flag"] = False
+
 # Genera continuamente una respuesta basada en la imagen de la cámara y aplica 
 # determinadas transformaciones a la imagen
 # INPUT
@@ -103,6 +122,8 @@ def generate(*transforms):
             exit()
 
         while True:
+            # Configuramos la cámara
+            configCamera(cap)
             # Definimos el tiempo de inicio
             start_time = time.time()
             # Capturamos la imagen de la cámara
