@@ -1,6 +1,6 @@
 #-----------------------Librerías----------------------------
 # Librerias para streaming
-from flask import Flask, render_template, Response, request
+from flask import Flask, render_template, Response, request, send_file
 from threading import Thread
 
 # Librerias para procesamiento de imagenes
@@ -16,6 +16,8 @@ radio,x,y = (0,0,0)
 state = {"circle": False, "fourier": False, "reconstruction": False, "grid": False }
 reconstructionMode = "intensity"
 cameraConfig = {"exposure": 50, "gain": 1, "width": 640, "height": 480, "flag": True}
+download = True
+downloadPath = "./resources/DHM.jpg"
 
 #---------------------Decoradores-----------------------------
 def validation_transform(condition):
@@ -114,6 +116,7 @@ def configCamera(cap):
 # *transforms: Función que modifica la imagen según las necesidades y debe retornar imagen rgb 
 # OUTPUT: String de respuesta con la imagen codificada
 def generate(*transforms):
+    global download, downloadPath
     cap = cv2.VideoCapture(0)
     try:
         # Verificar si la cámara se ha abierto correctamente
@@ -138,6 +141,11 @@ def generate(*transforms):
             final_frame = frame
             for transform in transforms:
                 final_frame = transform(final_frame)
+
+            # Si se solicitó una descarga, se guarda en un archivo la imagen
+            if download:
+                cv2.imwrite(downloadPath , final_frame)
+                download = False
 
             # Escribimos los FPS sobre la imagen
             fps = int(1.0 / (time.time() - start_time))
@@ -282,6 +290,12 @@ def config_state():
 @app.route("/video_feed")
 def video_feed():
     return Response(generate(apply_fourier_transform, draw_circle, apply_DHM_reconstruction, add_coordinate_axes), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+@app.route("/download_feed")
+def download_feed():
+    global downloadPath,download
+    download = True
+    return send_file(downloadPath, mimetype='image/jpg')
 #-----------------------Corremos el servidor----------------------------
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0')
