@@ -247,10 +247,10 @@ def add_circle():
 @app.route("/config_camera")
 def config_camera():
     global cameraConfig
-    cameraConfig["exposure"]  = request.args.get("exposure", cameraConfig["exposure"])
-    cameraConfig["gain"]  = request.args.get("gain", cameraConfig["gain"])
-    cameraConfig["height"]  = request.args.get("height", cameraConfig["height"])
-    cameraConfig["width"]  = request.args.get("width", cameraConfig["width"])
+    cameraConfig["exposure"]  = int(request.args.get("exposure", cameraConfig["exposure"]))
+    cameraConfig["gain"]  = int(request.args.get("gain", cameraConfig["gain"]))
+    cameraConfig["height"]  = int(request.args.get("height", cameraConfig["height"]))
+    cameraConfig["width"]  = int(request.args.get("width", cameraConfig["width"]))
 
     cameraConfig["flag"] = True  # Permitimos que se ejecute la configuración establecida
     return Response('OK')
