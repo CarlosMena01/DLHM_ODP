@@ -197,3 +197,15 @@ async function toggleReconstruction() {
   state.reconstruction = state.reconstruction ? false : true;
   await updateState();
 }
+
+async function downloadImage() {
+  var source = state.root + "/download_feed";
+
+  var a = document.createElement("a");
+
+  a.download = true;
+  a.target = "_blank";
+  a.href = source;
+
+  a.click();
+}
