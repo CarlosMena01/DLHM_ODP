@@ -244,6 +244,17 @@ def add_circle():
     y = int(request.args.get('y', 0))
     return Response('OK')
 
+@app.route("/config_camera")
+def config_camera():
+    global cameraConfig
+    cameraConfig["exposure"]  = request.args.get("exposure", cameraConfig["exposure"])
+    cameraConfig["gain"]  = request.args.get("gain", cameraConfig["gain"])
+    cameraConfig["height"]  = request.args.get("height", cameraConfig["height"])
+    cameraConfig["width"]  = request.args.get("width", cameraConfig["width"])
+
+    cameraConfig["flag"] = True  # Permitimos que se ejecute la configuración establecida
+    return Response('OK')
+
 @app.route("/config_reconstruction")
 def config_reconstruction():
     global reconstructionMode
