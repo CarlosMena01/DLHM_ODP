@@ -54,6 +54,9 @@ timeValue.innerHTML = sliderTime.value;
 
 sliderTime.oninput = function () {
   timeValue.innerHTML = this.value;
+  const url = new URL(state.root + "/config_camera");
+  url.searchParams.set("exposure", this.value);
+  fetch(url);
 };
 
 // Ganancia
