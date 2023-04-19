@@ -203,6 +203,8 @@ def apply_DHM_reconstruction(img):
         result = result*255
     elif (reconstructionMode =='phase'):
         result=np.angle(result)
+        # Reescalamos entre 0 y 255
+        result = ((result + np.pi)/(2*np.pi))*255
     elif (reconstructionMode =='amplitude'):
         result=np.abs(result)
         
