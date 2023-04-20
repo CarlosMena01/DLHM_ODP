@@ -20,6 +20,7 @@ download = True
 downloadPath = "./resources/DHM.jpg"
 
 #---------------------Decoradores-----------------------------
+# Revisa la condición determinada dentro de "state" y si se encuentra desactivada, retorna el input
 def validation_transform(condition):
     def validate_function(transform):
         global state
