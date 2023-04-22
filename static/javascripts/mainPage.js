@@ -174,7 +174,6 @@ async function submitCoords() {
 
 // Maneja la acción de mostrar u ocultar la cuadrícula
 async function toggleGrid() {
-  state.reconstruction = false;
   state.grid = state.grid ? false : true;
   await updateState();
 }
