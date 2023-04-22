@@ -290,6 +290,12 @@ app = Flask(__name__)
 def index():
      return render_template("index.html")
 
+@app.route("/compensation")
+def compensation():
+    global angleX, angleY
+    angleX = float(request.args.get('angleY', 0))
+    angleY = float(request.args.get('angleX', 0))
+
 @app.route("/add_circle")
 def add_circle():
     global radio,x,y
