@@ -46,25 +46,29 @@ document.addEventListener("click", function (event) {
 
 /*-----------------------Sliders reading------------*/
 
+function config_slider(slider, value, path, param) {
+  value.value = slider.value;
+
+  slider.oninput = function () {
+    value.value = this.value;
+    const url = new URL(state.root + path);
+    url.searchParams.set(param, this.value);
+    fetch(url);
+  };
+
+  value.oninput = function () {
+    slider.value = this.value;
+    const url = new URL(state.root + path);
+    url.searchParams.set(param, this.value);
+    fetch(url);
+  };
+}
+
 // Tiempo de exposición
 const sliderTime = document.getElementById("time");
 const timeValue = document.getElementById("time-value");
 
-timeValue.value = sliderTime.value;
-
-sliderTime.oninput = function () {
-  timeValue.value = this.value;
-  const url = new URL(state.root + "/config_camera");
-  url.searchParams.set("exposure", this.value);
-  fetch(url);
-};
-
-timeValue.oninput = function () {
-  sliderTime.value = this.value;
-  const url = new URL(state.root + "/config_camera");
-  url.searchParams.set("exposure", this.value);
-  fetch(url);
-};
+config_slider(sliderTime, timeValue, "/config_camera", "exposure");
 
 /*----------------------CANVAS READING-------------- */
 const canvas = document.getElementById("mainCanvas");
