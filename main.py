@@ -174,26 +174,23 @@ def apply_DHM_reconstruction(img):
     mask = cv2.circle(mask,(x,y), radio, (1,1,1), -1)
 
     img_filter = fshift*mask
-
-    # ----------Desplazar espectro----------
     img_filter = img_filter.astype(np.complex128) # Aseguramos el tipo de la imagen
+    
+    # ----------Desplazar espectro----------
+    # Recortamos la imagen filtrada en un cuadrado que limita con el circulo
+    ymin, ymax = (max(0,y - radio),max(0,y + radio)) # Evitamos errores de recorte
+    xmin, xmax = (max(0,x - radio),max(0,x + radio)) # Evitamos errores de recorte
 
-    # Obtener dimensiones de la imagen
-    alto, ancho = img_filter.shape[:2]
+    cropped_image = img_filter[ymin:ymax,xmin:xmax]
 
-    # Definir matriz de transformación
-    M = np.float32([[1, 0, ancho//2 - x], [0, 1, alto//2 - y]]) # Desplazamos a la mitad de la imagen
-
-    # Dividir imagen en sus partes real e imaginaria
-    real = np.real(img_filter)
-    imag = np.imag(img_filter)
-
-    # Aplicar transformación a partes real e imaginaria
-    real_desplazada = cv2.warpAffine(real, M, (ancho, alto))
-    imag_desplazada = cv2.warpAffine(imag, M, (ancho, alto))
-
-    # Combinar partes real e imaginaria en una imagen compleja
-    result = real_desplazada + 1j*imag_desplazada
+    # Creamos un Padding para que el recorte quede centrado
+    rows, cols = img_filter.shape[:2]
+    width, heigh = cropped_image.shape[:2]
+    
+    # Agrega ceros alrededor de la matriz de la imagen
+    result = np.zeros((rows, cols), dtype=np.complex128)
+    result[(rows - width)//2: (rows + width)//2, (cols - heigh)//2: (cols + heigh)//2] = cropped_image
+    # ----------Etapa final----------
     # Invertir FFT
     result = ifft2(result)
 
