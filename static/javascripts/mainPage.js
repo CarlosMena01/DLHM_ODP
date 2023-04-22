@@ -70,6 +70,17 @@ const timeValue = document.getElementById("time-value");
 
 config_slider(sliderTime, timeValue, "/config_camera", "exposure");
 
+// Angulos
+const sliderAngleX = document.getElementById("angleX");
+const valueAngleX = document.getElementById("angleX-value");
+
+config_slider(sliderAngleX, valueAngleX, "/compensation", "angleX");
+
+const sliderAngleY = document.getElementById("angleY");
+const valueAngleY = document.getElementById("angleY-value");
+
+config_slider(sliderAngleY, valueAngleY, "/compensation", "angleY");
+
 /*----------------------CANVAS READING-------------- */
 const canvas = document.getElementById("mainCanvas");
 const ctx = canvas.getContext("2d");
