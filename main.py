@@ -295,6 +295,7 @@ def compensation():
     global angleX, angleY
     angleX = float(request.args.get('angleY', 0))
     angleY = float(request.args.get('angleX', 0))
+    return Response('OK')
 
 @app.route("/add_circle")
 def add_circle():
