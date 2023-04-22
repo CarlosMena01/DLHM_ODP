@@ -98,6 +98,14 @@ main .right-container .sliders .slidecontainer .slider-value {
   display: flex;
   justify-content: space-around;
 }
+
+main .right-container .sliders .slidecontainer .slider-value .numberInput {
+  width: 15%;
+  background: none;
+  border: none;
+  font-size: 16px;
+  font-weight: bold;
+}
 /* Etiquetas de entradas */
 label,
 span {
