@@ -12,10 +12,12 @@ import cv2
 import time
 
 #-----------------------Variables globales----------------------------
-radio,x,y = (0,0,0)
-state = {"circle": False, "fourier": False, "reconstruction": False, "grid": False }
-reconstructionMode = "intensity"
-cameraConfig = {"exposure": 50, "gain": 1, "width": 640, "height": 480, "flag": True}
+radio,x,y = (0,0,0) # Circulo para la reconstrucción
+state = {"circle": False, "fourier": False, "reconstruction": False, "grid": False } # Estado de la imagen transmitida
+reconstructionMode = "intensity" # Modo de la transformación de reconstrucción
+cameraConfig = {"exposure": 50, "gain": 1, "width": 640, "height": 480, "flag": True} # Configuración de la cámara
+angleX, angleY = (0,0) # Angúlos de la onda plana de compensación 
+# Variables para la descarga
 download = True
 downloadPath = "./resources/DHM.jpg"
 
@@ -190,9 +192,14 @@ def apply_DHM_reconstruction(img):
     # Agrega ceros alrededor de la matriz de la imagen
     result = np.zeros((rows, cols), dtype=np.complex128)
     result[(rows - width)//2: (rows + width)//2, (cols - heigh)//2: (cols + heigh)//2] = cropped_image
-    # ----------Etapa final----------
-    # Invertir FFT
+    # ----------Invertir FFT----------
     result = ifft2(result)
+    
+    # ----------Compensar reconstrucción----------
+    global angleX, angleY  # @TODO optimizar para guardar la onda en memoria
+    wave = plane_wave(cols, rows, angleX, angleY, 1, 1, 1)
+    result += wave 
+
 
     # Convertir a imagen RGB según el modo que corresponda
     if (reconstructionMode =='intensity'):
@@ -244,6 +251,29 @@ def interpol(image):
     interpolated_matrix = interpolated_matrix.astype(np.uint8)
 
     return interpolated_matrix
+
+# Crea una onda plana
+# Inputs:
+# M, N: Tamaño de la matriz
+# angleX, angleY: Ángulos de la onda
+# dx, dy, w_length: tamaños de pixel y longitud de onda
+def plane_wave(M,N,angleX,angleY,dx,dy,w_length):
+    Mcenter = M//2
+    Ncenter = N//2
+    
+    x = np.arange(-Mcenter, Mcenter + M%2)
+    y = np.arange(-Ncenter, Ncenter + N%2)
+    
+    X,Y = np.meshgrid(x,y)
+    
+    k = 2*np.pi/w_length
+    
+    Ax = np.cos(angleX)
+    Ay = np.cos(angleY)
+    
+    wave = np.exp(1j*k*(Ax*X*dx+Ay*Y*dy))
+    
+    return wave
 
 #-----------------------Hilos----------------------------
 #Creamos un hilo que se encargue del procesamiento del video
