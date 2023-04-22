@@ -196,16 +196,15 @@ def apply_DHM_reconstruction(img):
 
     # Convertir a imagen RGB según el modo que corresponda
     if (reconstructionMode =='intensity'):
-        result = result/255
         result = np.abs(result)**2
-        result = result*255
+
     elif (reconstructionMode =='phase'):
         result=np.angle(result)
-        # Reescalamos entre 0 y 255
-        result = ((result + np.pi)/(2*np.pi))*255
+
     elif (reconstructionMode =='amplitude'):
         result=np.abs(result)
-        
+    
+    result = interpol(result)
     result = cv2.cvtColor(cv2.convertScaleAbs(result), cv2.COLOR_GRAY2RGB)
 
     return result
@@ -228,7 +227,24 @@ def draw_circle(img):
 def str2bool(str):
     if str.lower() == "true":
         return True
-    return False    
+    return False 
+
+# Toma una matriz de valores reales y los reescala al intervalo 0-255
+# Input: image: imagen a reescalar
+# Output: Imagen reescalada
+def interpol(image):
+    # Calcula los valores mínimo y máximo de la matriz
+    min_val = np.min(image)
+    max_val = np.max(image)
+
+    # Interpola los valores de la matriz en un rango de 0 a 255
+    interpolated_matrix = ((image - min_val) / (max_val - min_val)) * 255
+
+    # Convierte los valores de la matriz a enteros de 8 bits sin signo
+    interpolated_matrix = interpolated_matrix.astype(np.uint8)
+
+    return interpolated_matrix
+
 #-----------------------Hilos----------------------------
 #Creamos un hilo que se encargue del procesamiento del video
 
@@ -299,3 +315,4 @@ def download_feed():
 #-----------------------Corremos el servidor----------------------------
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0')
+    
