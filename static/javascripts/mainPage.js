@@ -66,16 +66,6 @@ timeValue.oninput = function () {
   fetch(url);
 };
 
-// Ganancia
-const sliderGain = document.getElementById("gain");
-const gainValue = document.getElementById("gain-value");
-
-gainValue.innerHTML = parseFloat(sliderGain.value) / 100;
-
-sliderGain.oninput = function () {
-  gainValue.innerHTML = parseFloat(this.value) / 100;
-};
-
 /*----------------------CANVAS READING-------------- */
 const canvas = document.getElementById("mainCanvas");
 const ctx = canvas.getContext("2d");
