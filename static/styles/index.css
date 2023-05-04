@@ -173,29 +173,13 @@ button:active {
 /* Estilos para el contenedor */
 .button-select {
   width: 100%;
-  display: grid;
-  grid-template-columns: 80% 10%;
-}
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-
-.dropdown-content {
-  display: none;
-  position: absolute;
-  z-index: 1;
-  bottom: 100%;
-  right: 0;
-}
-
-.dropdown-content.show {
-  display: block;
-}
-
-.dropdown-content button {
-  width: 100%;
+  display: flex;
+  justify-content: space-around;
 }
 .option-btn {
-  background-color: #4421d9;
+  background-color: var(--light-color);
+}
+
+.active {
+  background-color: var(--main-color);
 }

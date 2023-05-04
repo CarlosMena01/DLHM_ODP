@@ -1,48 +1,23 @@
 /*---------------------Botón de reconstrucción------------*/
 // Obtenemos los elementos que necesitamos
-const reconstructionBtn = document.getElementById("main-btn-reconstruction");
-const phaseBtn = document.getElementById("phase-btn");
-const amplitudeBtn = document.getElementById("amplitude-btn");
-const intenistyBtn = document.getElementById("intenisty-btn");
-const dropdown = document.querySelector(".dropdown");
-const dropdownContent = document.querySelector(".dropdown-content");
-
-// Variable global para el modo de la reconstrucción
-var modeReconstruction = "instenisty";
-
-// Añadimos eventos a los botones
-phaseBtn.addEventListener("click", function () {
-  modeReconstruction = "phase";
-  reconstructionMode();
-  reconstructionBtn.textContent = "Reconstruir fase";
-  dropdownContent.classList.remove("show");
-});
-
-amplitudeBtn.addEventListener("click", function () {
-  modeReconstruction = "amplitude";
-  reconstructionMode();
-  reconstructionBtn.textContent = "Reconstruir amplitud";
-  dropdownContent.classList.remove("show");
-});
-
-intenistyBtn.addEventListener("click", function () {
-  modeReconstruction = "intensity";
-  reconstructionMode();
-  reconstructionBtn.textContent = "Reconstruir intensidad";
-  dropdownContent.classList.remove("show");
-});
-
-// Añadimos un evento al botón del menú desplegable para mostrar y ocultar el menú
-dropdown.addEventListener("click", function () {
-  dropdownContent.classList.toggle("show");
-});
-
-// Añadimos un evento al documento para cerrar el menú desplegable cuando se hace clic fuera de él
-document.addEventListener("click", function (event) {
-  if (!event.target.closest(".dropdown")) {
-    dropdownContent.classList.remove("show");
+function configReconstruction(mode) {
+  reconstructionMode(mode);
+  // Añadimos la clase Active
+  const botonPresionado = document.activeElement;
+  botonPresionado.classList.toggle("active");
+  // Obtener todos los botones y eliminar la clase "active" de los demás
+  const botones = document.getElementsByClassName("option-btn");
+  for (let i = 0; i < botones.length; i++) {
+    if (botones[i] !== botonPresionado) {
+      botones[i].classList.remove("active");
+    }
   }
-});
+  // Hacemos un toggle de la reconstrucción, pero solo si ningún botón
+  // Tiene la clase "active" permitimos que se apague
+  state.reconstruction = document.getElementsByClassName("active").length === 0;
+  /*  Si no hay elementos con clase active state.fourier vale true, y al togglear vale false*/
+  toggleReconstruction();
+}
 
 /*-----------------------Sliders reading------------*/
 
@@ -167,7 +142,7 @@ async function updateState() {
   await fetch(url);
 }
 // Actualiza el modo para la reconstrucción
-async function reconstructionMode() {
+async function reconstructionMode(modeReconstruction) {
   const url = new URL(state.root + "/config_reconstruction");
   url.searchParams.set("mode", modeReconstruction);
   await fetch(url);
