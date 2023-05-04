@@ -95,15 +95,18 @@
         </div>
 
         <div class="buttons">
+          <!-- Botones que almacenan valeres en disco -->
           <button id="download-button" onclick="downloadImage()">
             Descargar imagen
           </button>
-          <button id="grid-button" onclick="toggleGrid()">
-            Mostrar/ocultar cuadrícula
-          </button>
-          <button id="fft-button" onclick="toggleFFT()">
-            Aplicar/No aplicar FFT
-          </button>
+          <button id="reference-button">Guardar referencia</button>
+          <!-- Botones para transformacione -->
+          <div class="container-2btns">
+            <button id="grid-button" onclick="toggleGrid()">
+              Mostrar cuadrícula
+            </button>
+            <button id="fft-button" onclick="toggleFFT()">Aplicar FFT</button>
+          </div>
           <!-- Creamos la selección de la reconstrucción -->
           <div class="button-select">
             <button

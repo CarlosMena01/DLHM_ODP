@@ -143,6 +143,10 @@ span {
 }
 
 /* Botones */
+.container-2btns {
+  display: grid;
+  grid-template-columns: 50% 50%;
+}
 main .right-container .buttons {
   display: flex;
   flex-direction: column;

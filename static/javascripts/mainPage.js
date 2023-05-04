@@ -162,6 +162,8 @@ async function submitCoords() {
 // Maneja la acción de mostrar u ocultar la cuadrícula
 async function toggleGrid() {
   state.grid = state.grid ? false : true;
+  document.getElementById("grid-button").textContent =
+    (state.grid ? "Ocultar" : "Mostrar") + " cuadricula";
   await updateState();
 }
 
@@ -169,6 +171,8 @@ async function toggleGrid() {
 async function toggleFFT() {
   state.reconstruction = false;
   state.fourier = state.fourier ? false : true;
+  document.getElementById("fft-button").textContent =
+    (state.fourier ? "No aplicar" : "Aplicar") + "FFT";
   await updateState();
 }
 
