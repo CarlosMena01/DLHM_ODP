@@ -89,7 +89,7 @@ def add_coordinate_axes(img):
 # INPUT image: imagen que se desea codificar
 # OUTPUT String que puede ser recibido por el cliente
 def codeImage(image):
-    (flag, encodedImage) = cv2.imencode(".jpg", image)
+    (flag, encodedImage) = cv2.imencode(".jpg", cv2.resize(image, (640,480)))
     if not flag:
         return None
     return (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' +
