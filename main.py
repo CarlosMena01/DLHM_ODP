@@ -198,7 +198,7 @@ def apply_DHM_reconstruction(img):
     
     # ----------Compensar reconstrucción----------
     global angleX, angleY  # @TODO optimizar para guardar la onda en memoria
-    wave = plane_wave(cols, rows, angleX, angleY, 1, 1, 1)
+    wave = plane_wave(rows, cols, angleX, angleY, 1, 1, 1)
     result = wave*result 
 
 
