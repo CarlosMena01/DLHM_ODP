@@ -193,12 +193,13 @@ def apply_DHM_reconstruction(img):
     result = np.zeros((rows, cols), dtype=np.complex128)
     result[(rows - width)//2: (rows + width)//2, (cols - heigh)//2: (cols + heigh)//2] = cropped_image
     # ----------Invertir FFT----------
+    result = fftshift(result)
     result = ifft2(result)
     
     # ----------Compensar reconstrucción----------
     global angleX, angleY  # @TODO optimizar para guardar la onda en memoria
     wave = plane_wave(cols, rows, angleX, angleY, 1, 1, 1)
-    result += wave 
+    result = wave*result 
 
 
     # Convertir a imagen RGB según el modo que corresponda
@@ -261,15 +262,15 @@ def plane_wave(M,N,angleX,angleY,dx,dy,w_length):
     Mcenter = M//2
     Ncenter = N//2
     
-    x = np.arange(-Mcenter, Mcenter + M%2)
-    y = np.arange(-Ncenter, Ncenter + N%2)
+    x = np.arange(-Ncenter, Ncenter + N%2)
+    y = np.arange(-Mcenter, Mcenter + M%2)
     
-    X,Y = np.meshgrid(x,y)
+    X, Y = np.meshgrid(x,y)
     
     k = 2*np.pi/w_length
     
-    Ax = np.cos(angleX)
-    Ay = np.cos(angleY)
+    Ax = np.sin(angleX)
+    Ay = np.sin(angleY)
     
     wave = np.exp(1j*k*(Ax*X*dx+Ay*Y*dy))
     
@@ -293,8 +294,8 @@ def index():
 @app.route("/compensation")
 def compensation():
     global angleX, angleY
-    angleX = float(request.args.get('angleY', 0))
-    angleY = float(request.args.get('angleX', 0))
+    angleX = float(request.args.get('angleY', angleX))
+    angleY = float(request.args.get('angleX', angleY))
     return Response('OK')
 
 @app.route("/add_circle")
