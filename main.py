@@ -19,8 +19,10 @@ cameraConfig = {"exposure": 50, "gain": 1, "width": 640, "height": 480, "flag": 
 angleX, angleY = (0,0) # Angúlos de la onda plana de compensación 
 # Variables para la descarga y referencia
 download = True
-saveReference = True
+saveReference = False
 resourcesPath = "./resources"
+
+reference = np.zeros((cameraConfig["height"], cameraConfig["width"]), dtype=np.complex128)
 
 #---------------------Decoradores-----------------------------
 # Revisa la condición determinada dentro de "state" y si se encuentra desactivada, retorna el input
@@ -203,13 +205,13 @@ def apply_DHM_reconstruction(img):
     result = wave*result 
 
     # ---------- En caso de ser solictado guardamos la nueva referencia ----------
-    global saveReference, resourcesPath
+    global saveReference, resourcesPath, reference
     if saveReference:
         save_matrix(resourcesPath, result)
+        reference = load_matrix(resourcesPath)
         saveReference = False
     
     # ---------- Restamos la referencia -----------------------------
-    reference = load_matrix(resourcesPath)
     result -= reference
 
     # Convertir a imagen RGB según el modo que corresponda
