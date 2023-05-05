@@ -199,3 +199,8 @@ async function downloadImage() {
 
   a.click();
 }
+
+async function saveReference() {
+  const url = new URL(state.root + "/save_reference");
+  await fetch(url);
+}

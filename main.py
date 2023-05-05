@@ -17,9 +17,10 @@ state = {"circle": False, "fourier": False, "reconstruction": False, "grid": Fal
 reconstructionMode = "intensity" # Modo de la transformación de reconstrucción
 cameraConfig = {"exposure": 50, "gain": 1, "width": 640, "height": 480, "flag": True} # Configuración de la cámara
 angleX, angleY = (0,0) # Angúlos de la onda plana de compensación 
-# Variables para la descarga
+# Variables para la descarga y referencia
 download = True
-downloadPath = "./resources/DHM.jpg"
+saveReference = True
+resourcesPath = "./resources"
 
 #---------------------Decoradores-----------------------------
 # Revisa la condición determinada dentro de "state" y si se encuentra desactivada, retorna el input
@@ -119,7 +120,7 @@ def configCamera(cap):
 # *transforms: Función que modifica la imagen según las necesidades y debe retornar imagen rgb 
 # OUTPUT: String de respuesta con la imagen codificada
 def generate(*transforms):
-    global download, downloadPath
+    global download, resourcesPath
     cap = cv2.VideoCapture(0)
     try:
         # Verificar si la cámara se ha abierto correctamente
@@ -147,7 +148,7 @@ def generate(*transforms):
 
             # Si se solicitó una descarga, se guarda en un archivo la imagen
             if download:
-                cv2.imwrite(downloadPath , final_frame)
+                cv2.imwrite(resourcesPath + "/DHM.jpg" , final_frame)
                 download = False
 
             # Escribimos los FPS sobre la imagen
@@ -201,6 +202,15 @@ def apply_DHM_reconstruction(img):
     wave = plane_wave(rows, cols, angleX, angleY, 1, 1, 1)
     result = wave*result 
 
+    # ---------- En caso de ser solictado guardamos la nueva referencia ----------
+    global saveReference, resourcesPath
+    if saveReference:
+        save_matrix(resourcesPath, result)
+        saveReference = False
+    
+    # ---------- Restamos la referencia -----------------------------
+    reference = load_matrix(resourcesPath)
+    result -= reference
 
     # Convertir a imagen RGB según el modo que corresponda
     if (reconstructionMode =='intensity'):
@@ -236,6 +246,46 @@ def str2bool(str):
     if str.lower() == "true":
         return True
     return False 
+
+# Toma una matriz y la almacena en un texto plano
+# Input: path (str): Dirección donde se va a almacenar la matrix
+#        matrix: matriz a almacenar
+#        name: nombre del archivo
+# Output: void
+def save_matrix(path, matrix, name="data.txt"):
+    with open(path + "/" + name, 'w') as f:
+        for row in matrix:
+            for num in row:
+                if num.imag >= 0:
+                    f.write(f"{num.real}+{num.imag}j ")
+                else:
+                    f.write(f"{num.real}{num.imag}j ")
+            f.write("\n")
+
+# Toma una matriz en un archivo de texto y la carga como una matriz compleja de numpy
+# Input: path (str): Dirección del archivo a cargar
+# Output: matrix (numpy array): matriz compleja cargada desde el archivo
+def load_matrix(path, name="data.txt"):
+    # Leer el archivo de texto
+    with open(path + "/" + name, 'r') as f:
+        content = f.readlines()
+
+    # Crear una matriz compleja de numpy
+    matrix = np.zeros((len(content), len(content[0].split(" ")) -1), dtype=np.complex128)
+    # Función para validar si un string es númerico
+    def isNumeric(s):
+        try:
+            complex(s)
+            return True
+        except ValueError:
+            return False
+    # Llenar la matriz con los números complejos del archivo
+    for i, line in enumerate(content):
+        for j, num in enumerate(line.split(" ")):
+            if isNumeric(num):
+                matrix[i][j] = complex(num)
+                
+    return matrix
 
 # Toma una matriz de valores reales y los reescala al intervalo 0-255
 # Input: image: imagen a reescalar
@@ -347,9 +397,15 @@ def video_feed():
 
 @app.route("/download_feed")
 def download_feed():
-    global downloadPath,download
+    global resourcesPath,download
     download = True
-    return send_file(downloadPath, mimetype='image/jpg')
+    return send_file(resourcesPath + "/DHM.jpg", mimetype='image/jpg')
+
+@app.route("/save_reference")
+def save_reference():
+    global saveReference
+    saveReference = True
+    return Response('OK')
 #-----------------------Corremos el servidor----------------------------
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0')
