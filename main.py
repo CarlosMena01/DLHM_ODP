@@ -37,6 +37,72 @@ def validation_transform(condition):
         return new_function
     return validate_function
 
+#-----------------------Clases------------------------------
+# Clase para abstraer el uso de la cámara
+class Camera:
+    def __init__(self, source=0, width=640, height=480, exposure_time = 50):
+        self.source = source
+        self.width = width
+        self.height = height
+        self.exposure_time = exposure_time
+        self.capture = None
+
+    def open(self):
+        self.capture = cv2.VideoCapture(self.source)
+        # Verificar si la cámara se ha abierto correctamente
+        if not self.capture.isOpened():
+            print("Error al abrir la cámara")
+            exit()
+        self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, self.width)
+        self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, self.height)
+        self.capture.set(cv2.CAP_PROP_AUTO_EXPOSURE, 0.75) # Se desactiva el modo automatico
+        self.capture.set(cv2.CAP_PROP_EXPOSURE, self.exposure_time)
+
+    def close(self):
+        self.capture.release()
+
+    def read(self):
+        succes, image = self.capture.read()
+        return (succes, image)
+
+    def set_width(self, width):
+        self.width = width
+        if self.capture is not None:
+            self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, self.width)
+
+    def set_height(self, height):
+        self.height = height
+        if self.capture is not None:
+            self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, self.height)
+
+    def set_exposure_time(self, exposure_time):
+        self.exposure_time = exposure_time
+        if self.capture is not None:
+            self.capture.set(cv2.CAP_PROP_AUTO_EXPOSURE, 0.75) # Se desactiva el modo automatico
+            self.capture.set(cv2.CAP_PROP_EXPOSURE, self.exposure_time)
+
+    def set_source(self, source):
+        self.source = source
+        if self.capture is not None:
+            self.capture.open(self.source)
+            self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, self.width)
+            self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, self.height)
+    
+    def config(self, cameraConfig):
+        if(cameraConfig["flag"]):
+            # Se configura el tamaño de la cámara
+            self.set_height(cameraConfig["height"])
+            self.set_width(cameraConfig["width"])
+
+            # Se configura el tiempo de exposición
+            self.set_exposure_time(cameraConfig["exposure"])
+            
+            # Evitamos que se vuelva a configurar cada que se entre
+            cameraConfig["flag"] = False
+            return True
+        return False
+
+
 #-----------------------Funciones----------------------------
 # Aplica FFT
 # INPUT
@@ -98,41 +164,19 @@ def codeImage(image):
     return (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' +
         bytearray(encodedImage) + b'\r\n')
 
-# Configura la cámara según los parámetros establecidos
-# INPUT 
-# cap: instancia de la cámara a configurar
-# OUTPUT Void
-def configCamera(cap):
-    global cameraConfig
-    if(cameraConfig["flag"]):
-        # Se configura el tamaño de la cámara
-        cap.set(cv2.CAP_PROP_FRAME_WIDTH, cameraConfig["width"])
-        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, cameraConfig["height"])
-
-        # Se configura el tiempo de exposición
-        cap.set(cv2.CAP_PROP_AUTO_EXPOSURE, 0.75) # Se desactiva el modo automatico
-        cap.set(cv2.CAP_PROP_EXPOSURE, cameraConfig["exposure"])
-        
-        # Evitamos que se vuelva a configurar cada que se entre
-        cameraConfig["flag"] = False
-
 # Genera continuamente una respuesta basada en la imagen de la cámara y aplica 
 # determinadas transformaciones a la imagen
 # INPUT
 # *transforms: Función que modifica la imagen según las necesidades y debe retornar imagen rgb 
 # OUTPUT: String de respuesta con la imagen codificada
 def generate(*transforms):
-    global download, resourcesPath
-    cap = cv2.VideoCapture(0)
+    global download, resourcesPath, cameraConfig
+    cap = Camera()
+    cap.open()
     try:
-        # Verificar si la cámara se ha abierto correctamente
-        if not cap.isOpened():
-            print("Error al abrir la cámara")
-            exit()
-
         while True:
             # Configuramos la cámara
-            configCamera(cap)
+            cap.config(cameraConfig)
             # Definimos el tiempo de inicio
             start_time = time.time()
             # Capturamos la imagen de la cámara
@@ -140,7 +184,7 @@ def generate(*transforms):
             # Re intentamos obtener la imagen en caso de fallar
             while not succes:
                 print("La cámará no se pudo abrir, re intentado ...")
-                cap = cv2.VideoCapture(0)
+                cap.open()
                 succes, frame = cap.read()
             
             # Aplicamos las transformaciones pertinentes
@@ -159,8 +203,7 @@ def generate(*transforms):
 
             yield codeImage(final_frame)
     finally:
-        cap.release()
-
+        cap.close()
 # Reconstruye el holograma 
 # INPUT:
 # image: imagen del microscopio sin transformaciones
