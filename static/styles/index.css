@@ -160,7 +160,7 @@ button {
   padding: 10px 20px;
   font-size: 16px;
   cursor: pointer;
-  border-radius: 5px;
+  /* border-radius: 5px; */
   margin: 10px;
 }
 
@@ -175,13 +175,14 @@ button:active {
 
 /* Botón de reconstrucción */
 /* Estilos para el contenedor */
-.button-select {
-  width: 100%;
-  display: flex;
-  justify-content: space-around;
+.reconstruction-btns {
+  width: calc(100% - 20px + 1%);
+  display: grid;
+  grid-template-columns: 33% 33% 33%;
+  padding-left: 10px;
 }
-.option-btn {
-  background-color: var(--light-color);
+.reconstruction-btns button {
+  margin: 0;
 }
 
 .active {
