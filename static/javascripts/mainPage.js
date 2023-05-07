@@ -163,7 +163,7 @@ async function submitCoords() {
 async function toggleGrid() {
   state.grid = state.grid ? false : true;
   document.getElementById("grid-button").textContent =
-    (state.grid ? "Ocultar" : "Mostrar") + " cuadricula";
+    (state.grid ? "Hide" : "Show") + " grid";
   await updateState();
 }
 
@@ -172,7 +172,7 @@ async function toggleFFT() {
   state.reconstruction = false;
   state.fourier = state.fourier ? false : true;
   document.getElementById("fft-button").textContent =
-    (state.fourier ? "No aplicar" : "Aplicar") + "FFT";
+    (state.fourier ? "No apply" : "Apply") + " FFT";
   await updateState();
 }
 

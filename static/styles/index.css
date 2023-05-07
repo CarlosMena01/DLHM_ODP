@@ -22,6 +22,11 @@ header {
 
   background-color: var(--main-color);
 }
+header img {
+  object-fit: contain;
+  height: 90%;
+  margin-right: 10px;
+}
 
 header .title {
   font-weight: 800;
@@ -107,8 +112,8 @@ main .right-container .sliders .slidecontainer .slider-value .numberInput {
   font-weight: bold;
 }
 /* Etiquetas de entradas */
-label,
-span {
+label {
+  width: 95%;
   font-size: 16px;
   font-weight: bold;
 }

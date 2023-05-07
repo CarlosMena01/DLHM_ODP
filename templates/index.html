@@ -7,6 +7,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
+      rel="shortcut icon"
+      href="{{ url_for('static',filename='assets/ODP_logo.svg') }}"
+    />
+    <link
       href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
       rel="stylesheet"
     />
@@ -22,7 +26,11 @@
   </head>
   <body class="container">
     <header>
-      <h1 class="title">Reconstrucción de DHM</h1>
+      <img
+        src="{{ url_for('static',filename='assets/ODP_logo.png') }}"
+        alt="logo_ODP"
+      />
+      <h1 class="title">DHM Reconstruction</h1>
     </header>
     <main>
       <div class="left-container">
@@ -34,7 +42,7 @@
       <div class="right-container">
         <div class="sliders">
           <div class="slidecontainer">
-            <label for="time"> Tiempo de exposición: </label>
+            <label for="time"> Exposure time: </label>
             <div class="slider-value">
               <input
                 type="range"
@@ -53,7 +61,7 @@
             </div>
           </div>
           <div class="slidecontainer">
-            <label for="time"> Ángulo en X: </label>
+            <label for="time"> Offset angle in X: </label>
             <div class="slider-value">
               <input
                 type="range"
@@ -73,7 +81,7 @@
             </div>
           </div>
           <div class="slidecontainer">
-            <label for="time"> Ángulo en Y: </label>
+            <label for="time"> Offset angle in Y: </label>
             <div class="slider-value">
               <input
                 type="range"
@@ -97,17 +105,15 @@
         <div class="buttons">
           <!-- Botones que almacenan valeres en disco -->
           <button id="download-button" onclick="downloadImage()">
-            Descargar imagen
+            Download image
           </button>
           <button id="reference-button" onclick="saveReference()">
-            Guardar referencia
+            Save reference
           </button>
           <!-- Botones para transformacione -->
           <div class="container-2btns">
-            <button id="grid-button" onclick="toggleGrid()">
-              Mostrar cuadrícula
-            </button>
-            <button id="fft-button" onclick="toggleFFT()">Aplicar FFT</button>
+            <button id="grid-button" onclick="toggleGrid()">Show grid</button>
+            <button id="fft-button" onclick="toggleFFT()">Apply FFT</button>
           </div>
           <!-- Creamos la selección de la reconstrucción -->
           <div class="reconstruction-btns">
@@ -116,21 +122,21 @@
               class="option-btn"
               onclick="configReconstruction('phase')"
             >
-              Fase
+              Phase
             </button>
             <button
               id="amplitude-btn"
               class="option-btn"
               onclick="configReconstruction('amplitude')"
             >
-              Amplitud
+              Amplitude
             </button>
             <button
               id="intenisty-btn"
               class="option-btn"
               onclick="configReconstruction('intensity')"
             >
-              Intensidad
+              Intensity
             </button>
           </div>
         </div>
