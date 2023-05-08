@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static',filename='styles/reset.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static',filename='styles/index.css') }}"
+    />
+    <title>DHM</title>
+  </head>
+  <body class="container">
+    <header>
+      <h1 class="title">Reconstrucción de DHM</h1>
+    </header>
+    <main>
+      <div class="left-container">
+        <div class="superposition">
+          <canvas id="mainCanvas" width="640" height="480"></canvas>
+          <img src="{{url_for('video_feed')}}" width="640" height="480" />
+        </div>
+      </div>
+      <div class="right-container">
+        <div class="sliders">
+          <div class="slidecontainer">
+            <label for="time"> Tiempo de exposición: </label>
+            <div class="slider-value">
+              <input
+                type="range"
+                min="-100"
+                max="500"
+                value="250"
+                class="slider"
+                id="time"
+              />
+              <span id="time-value">250</span>
+            </div>
+          </div>
+          <div class="slidecontainer">
+            <label for="gain"> Ganancia: </label>
+            <div class="slider-value">
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value="50"
+                class="slider"
+                id="gain"
+              />
+              <span id="gain-value">0.5</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="buttons">
+          <button id="download-button" onclick="downloadImage()">
+            Descargar imagen
+          </button>
+          <button id="grid-button" onclick="toggleGrid()">
+            Mostrar/ocultar cuadrícula
+          </button>
+          <button id="fft-button" onclick="toggleFFT()">
+            Aplicar/No aplicar FFT
+          </button>
+          <!-- Creamos la selección de la reconstrucción -->
+          <div class="button-select">
+            <button
+              id="main-btn-reconstruction"
+              onclick="toggleReconstruction()"
+            >
+              Reconstruir
+            </button>
+            <div class="dropdown">
+              <button id="selection-btn">
+                <img
+                  src="{{ url_for('static',filename='assets/up-arrow.svg') }}"
+                  alt="arrow up"
+                  width="10px"
+                />
+              </button>
+              <div class="dropdown-content">
+                <button id="phase-btn" class="option-btn">Fase</button>
+                <button id="amplitude-btn" class="option-btn">Amplitud</button>
+                <button id="intenisty-btn" class="option-btn">
+                  Intensidad
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+  <script src="{{ url_for('static',filename='javascripts/mainPage.js') }}"></script>
+</html>

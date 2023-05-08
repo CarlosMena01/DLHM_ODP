@@ -1,0 +1,61 @@
+# Librería para procesamiento de imágenes con Picamera
+from picamera import PiCamera
+from io import BytesIO
+from PIL import Image
+
+# Clase para abstraer el uso de la cámara
+class Camera:
+    def __init__(self, source=0, width=640, height=480, exposure_time=50):
+        self.source = source
+        self.width = width
+        self.height = height
+        self.exposure_time = exposure_time
+        self.camera = None
+        self.ra
+
+    def open(self):
+        self.camera = PiCamera()
+        self.camera.exposure_mode = 'off'
+        self.camera.shutter_speed = self.exposure_time
+        self.stream = self.camera.capture(self.raw_capture, format="jpeg")
+
+    def close(self):
+        self.camera.close()
+
+    def read(self):
+        if(self.stream != None):
+            self.stream.seek(0)
+            image = Image.open(stream)
+            return True, image
+
+    def set_width(self, width):
+        self.width = width
+        if self.camera is not None:
+            self.camera.resolution = (self.width, self.height)
+
+    def set_height(self, height):
+        self.height = height
+        if self.camera is not None:
+            self.camera.resolution = (self.width, self.height)
+
+    def set_exposure_time(self, exposure_time):
+        self.exposure_time = exposure_time
+        if self.camera is not None:
+            self.camera.shutter_speed = self.exposure_time
+
+    def set_source(self, source):
+        self.source = source
+
+    def config(self, cameraConfig):
+        if(cameraConfig["flag"]):
+            # Se configura el tamaño de la cámara
+            self.set_height(cameraConfig["height"])
+            self.set_width(cameraConfig["width"])
+
+            # Se configura el tiempo de exposición
+            self.set_exposure_time(cameraConfig["exposure"])
+
+            # Evitamos que se vuelva a configurar cada que se entre
+            cameraConfig["flag"] = False
+            return True
+        return False

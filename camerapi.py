@@ -1,10 +1,11 @@
 # Librería para procesamiento de imágenes con Picamera
-from picamera.array import PiRGBArray
 from picamera import PiCamera
-
+from io import BytesIO
+from PIL import Image
+import numpy as np
 # Clase para abstraer el uso de la cámara
 class Camera:
-    def __init__(self, source=0, width=640, height=480, exposure_time=50):
+    def __init__(self, source=0, width=3008, height=3008, exposure_time=50):
         self.source = source
         self.width = width
         self.height = height
@@ -12,31 +13,30 @@ class Camera:
         self.camera = None
 
     def open(self):
-        self.camera = PiCamera(resolution=(self.width, self.height), framerate=30)
-        self.camera.iso = 100
+        self.camera = PiCamera()
+        self.camera.resolution = (self.width, self.height)
         self.camera.exposure_mode = 'off'
         self.camera.shutter_speed = self.exposure_time
-        self.raw_capture = PiRGBArray(self.camera, size=(self.width, self.height))
-        self.stream = self.camera.capture_continuous(self.raw_capture, format="bgr", use_video_port=True)
+        self.camera.start_preview()
+        self.image = np.empty((self.height, self.width, 3), dtype = np.uint8)
+        self.camera.capture(self.image, "rgb")
 
     def close(self):
         self.camera.close()
 
     def read(self):
-        raw_frame = next(self.stream)
-        image = raw_frame.array
-        self.raw_capture.truncate(0)
+        self.image = np.empty((self.width, self.height, 3), dtype = np.uint8)
+        self.camera.capture(self.image, "rgb")
+        image = self.image
         return True, image
 
     def set_width(self, width):
         self.width = width
-        if self.camera is not None:
-            self.camera.resolution = (self.width, self.height)
+        self.camera.resolution = (self.width, self.height)
 
     def set_height(self, height):
         self.height = height
-        if self.camera is not None:
-            self.camera.resolution = (self.width, self.height)
+        self.camera.resolution = (self.width, self.height)
 
     def set_exposure_time(self, exposure_time):
         self.exposure_time = exposure_time

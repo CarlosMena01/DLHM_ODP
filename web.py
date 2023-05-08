@@ -9,9 +9,9 @@ import config
 
 # Importamos la cámara según la librería solicitada
 if config.cameraType == "cv2":
-    from .camera import *
+    from camera import *
 else:
-    from .picamera import *
+    from camerapi import *
 
 # Genera continuamente una respuesta basada en la imagen de la cámara y aplica 
 # determinadas transformaciones a la imagen
@@ -19,7 +19,7 @@ else:
 # *transforms: Función que modifica la imagen según las necesidades y debe retornar imagen rgb 
 # OUTPUT: String de respuesta con la imagen codificada
 def generate(*transforms):
-    cap = Camera()
+    cap = Camera(0, config.cameraConfig["width"],  config.cameraConfig["height"], 50)
     cap.open()
     try:
         while True:
