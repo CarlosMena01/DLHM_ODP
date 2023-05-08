@@ -10,3 +10,5 @@ reconstructionMode = "intensity" # Modo de la transformación de reconstrucción
 download = True
 saveReference = False
 resourcesPath = "./resources"
+
+cameraType = "picamera" # picamera or cv2

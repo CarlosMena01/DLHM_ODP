@@ -4,9 +4,14 @@ from flask import Flask, render_template, Response, request, send_file
 from threading import Thread
 # Librerías de manejo de tiempo
 import time
-from camera import *
 from filters import *
 import config
+
+# Importamos la cámara según la librería solicitada
+if config.cameraType == "cv2":
+    from .camera import *
+else:
+    from .picamera import *
 
 # Genera continuamente una respuesta basada en la imagen de la cámara y aplica 
 # determinadas transformaciones a la imagen
