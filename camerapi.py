@@ -5,28 +5,32 @@ from PIL import Image
 import numpy as np
 # Clase para abstraer el uso de la cámara
 class Camera:
-    def __init__(self, source=0, width=3008, height=3008, exposure_time=50):
+    def __init__(self, source=0, width=3008, height=3008, exposure_time=50, max_width = 4056, max_height = 3040):
         self.source = source
         self.width = width
         self.height = height
         self.exposure_time = exposure_time
         self.camera = None
+        self.max_width = max_width
+        self.max_height = max_height
 
     def open(self):
         self.camera = PiCamera()
+        # Configuramos la resolución y el ROI
         self.camera.resolution = (self.width, self.height)
+        self.camera.zoom = (0,0,float(self.width/self.max_width),float(self.height/self.max_height))
         self.camera.exposure_mode = 'off'
         self.camera.shutter_speed = self.exposure_time
         self.camera.start_preview()
         self.image = np.empty((self.height, self.width, 3), dtype = np.uint8)
-        self.camera.capture(self.image, "rgb")
+        self.camera.capture(self.image, "bgr")
 
     def close(self):
         self.camera.close()
 
     def read(self):
-        self.image = np.empty((self.width, self.height, 3), dtype = np.uint8)
-        self.camera.capture(self.image, "rgb")
+        self.image = np.empty((self.height, self.width, 3), dtype = np.uint8)
+        self.camera.capture(self.image, "bgr")
         image = self.image
         return True, image
 
