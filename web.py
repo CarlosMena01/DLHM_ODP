@@ -47,7 +47,7 @@ def generate(*transforms):
 
             # Escribimos los FPS sobre la imagen
             fps = int(1.0 / (time.time() - start_time))
-            cv2.putText(final_frame, "FPS: {:n}".format(fps), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
+            cv2.putText(final_frame, "FPS: {:n}".format(fps), (100, 300), cv2.FONT_HERSHEY_SIMPLEX, 10, (255, 0, 0), 20)
 
             yield codeImage(final_frame)
     finally:
@@ -70,14 +70,6 @@ def str2bool(str):
     if str.lower() == "true":
         return True
     return False 
-
-#-----------------------Hilos----------------------------
-#Creamos un hilo que se encargue del procesamiento del video
-
-# Crear una instancia de Thread para la función generate()
-thread = Thread(target=generate)
-thread.daemon = True
-thread.start()
 
 #-----------------------Flask enrutado----------------------------
 app = Flask(__name__)
