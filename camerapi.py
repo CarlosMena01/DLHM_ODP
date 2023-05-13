@@ -1,10 +1,17 @@
 # Librería para procesamiento de imágenes con Picamera
 from picamera import PiCamera
-from io import BytesIO
-from PIL import Image
 import numpy as np
+import threading
+import time
 # Clase para abstraer el uso de la cámara
 class Camera:
+    def __start_config(self):
+        self.stop = True
+        time.sleep(1)
+    def __end_config(self):
+        self.stop = False
+        self.thread = threading.Thread(target=self.generate_frame)
+        self.thread.start()
     def __init__(self, source=0, width=3008, height=3008, exposure_time=50, max_width = 4056, max_height = 3040):
         self.source = source
         self.width = width
@@ -13,26 +20,41 @@ class Camera:
         self.camera = None
         self.max_width = max_width
         self.max_height = max_height
+        self.image = np.empty((self.height, self.width, 3), dtype = np.uint8)
+        self.stop = False
+        self.capture = False
+
+    def generate_frame(self):
+        for image in self.camera.capture_continuous(self.image, "bgr"):
+            self.image = image
+            self.capture = True
+            if self.stop:
+                break
 
     def open(self):
         self.camera = PiCamera()
+        self.camera.framerate = 30
         # Configuramos la resolución y el ROI
         self.camera.resolution = (self.width, self.height)
         self.camera.zoom = (0,0,float(self.width/self.max_width),float(self.height/self.max_height))
+        # Configuramos el tiempo de exposición y la ganacia
         self.camera.exposure_mode = 'off'
         self.camera.shutter_speed = self.exposure_time
+        self.camera.iso = 100
+        # Iniciamos el hilo de cáptura
         self.camera.start_preview()
-        self.image = np.empty((self.height, self.width, 3), dtype = np.uint8)
-        self.camera.capture(self.image, "bgr")
+        time.sleep(2)
+        self.thread = threading.Thread(target=self.generate_frame)
+        self.thread.start()
 
     def close(self):
         self.camera.close()
 
     def read(self):
-        self.image = np.empty((self.height, self.width, 3), dtype = np.uint8)
-        self.camera.capture(self.image, "bgr")
-        image = self.image
-        return True, image
+        while( not (self.capture)):
+            time.sleep(0.001)
+        self.capture = False
+        return True, self.image
 
     def set_width(self, width):
         self.width = width
@@ -52,6 +74,7 @@ class Camera:
 
     def config(self, cameraConfig):
         if(cameraConfig["flag"]):
+            self.__start_config()
             # Se configura el tamaño de la cámara
             self.set_height(cameraConfig["height"])
             self.set_width(cameraConfig["width"])
@@ -61,5 +84,6 @@ class Camera:
 
             # Evitamos que se vuelva a configurar cada que se entre
             cameraConfig["flag"] = False
+            self.__end_config()
             return True
         return False
