@@ -47,7 +47,7 @@ def generate(*transforms):
 
             # Escribimos los FPS sobre la imagen
             fps = int(1.0 / (time.time() - start_time))
-            cv2.putText(final_frame, "FPS: {:n}".format(fps), (100, 300), cv2.FONT_HERSHEY_SIMPLEX, 10, (255, 0, 0), 20)
+            cv2.putText(final_frame, "FPS: {:n}".format(fps), (10*5, 30*5), cv2.FONT_HERSHEY_SIMPLEX, 5, (255, 0, 0), 5)
 
             yield codeImage(final_frame)
     finally:
@@ -57,7 +57,7 @@ def generate(*transforms):
 # INPUT image: imagen que se desea codificar
 # OUTPUT String que puede ser recibido por el cliente
 def codeImage(image):
-    (flag, encodedImage) = cv2.imencode(".jpg", cv2.resize(image, (640,480)))
+    (flag, encodedImage) = cv2.imencode(".jpg", cv2.resize(image, (480,480)))
     if not flag:
         return None
     return (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' +
