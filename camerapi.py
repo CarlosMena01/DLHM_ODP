@@ -22,12 +22,12 @@ class Camera:
         self.max_height = max_height
         self.image = np.empty((self.height, self.width, 3), dtype = np.uint8)
         self.stop = False
-        self.capture = False
+        self.image_captured = False
 
     def generate_frame(self):
         for image in self.camera.capture_continuous(self.image, "bgr"):
             self.image = image
-            self.capture = True
+            self.image_captured = True
             if self.stop:
                 break
 
@@ -51,9 +51,9 @@ class Camera:
         self.camera.close()
 
     def read(self):
-        while( not (self.capture)):
+        while( not (self.image_captured)):
             time.sleep(0.001)
-        self.capture = False
+        self.image_captured = False
         return True, self.image
 
     def set_width(self, width):
