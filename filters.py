@@ -104,24 +104,25 @@ def add_coordinate_axes(img):
     # Obtener las dimensiones de la imagen
     height, width, channels = img.shape
 
-    # Crear una imagen en blanco para la cuadrícula
-    grid = np.zeros((height, width, channels), np.uint8)
+    # Crear una copia para la cuadrícula
+    result = img
 
-    # Definir el tamaño de la cuadrícula (cada cuadro mide 50 píxeles)
-    cell_size = 50
+    # Definir el tamaño de la cuadrícula (será una cuadricula 3x3 (imagen cuadrada))
+    cell_size = width//3
+    thickness = int(0.005*width) # 0.5% del ancho
 
-    # Dibujar las líneas verticales de la cuadrícula
-    for x in range(0, width, cell_size):
-        cv2.line(grid, (x, 0), (x, height), (255, 255, 255), 1)
-        cv2.putText(grid, str(x), (x+5, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
-
-    # Dibujar las líneas horizontales de la cuadrícula
-    for y in range(0, height, cell_size):
-        cv2.line(grid, (0, y), (width, y), (255, 255, 255), 1)
-        cv2.putText(grid, str(y), (5, y+15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
-
-    # Combinar la imagen original y la cuadrícula
-    result = cv2.addWeighted(img, 0.7, grid, 0.3, 0)
+    # Dibujar las líneas de la cuadrícula grande
+    for i in range(1, 3):
+        # Linea horizontal
+        cv2.line(result, (i*cell_size, 0), (i*cell_size, height), (255, 255, 255), thickness)
+        # Linea vertical
+        cv2.line(result, (0, i*cell_size), (width, i*cell_size), (255, 255, 255), thickness)
+    # Dibujar las líneas de la cuadrícula pequeña
+    for i in range(1, 9):
+        # Linea horizontal
+        cv2.line(result, (i*cell_size//3, 0), (i*cell_size//3, height), (200, 200, 200), thickness//5)
+        # Linea vertical
+        cv2.line(result, (0, i*cell_size//3), (width, i*cell_size//3), (200, 200, 200), thickness//5)
 
     return result
 
