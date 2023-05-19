@@ -13,13 +13,15 @@ if config.cameraType == "cv2":
 else:
     from camerapi import *
 
+# --------------------- Instanciamos la cámara --------------------------
+cap = Camera(0, config.cameraConfig["width"],  config.cameraConfig["height"], 50)
+
 # Genera continuamente una respuesta basada en la imagen de la cámara y aplica 
 # determinadas transformaciones a la imagen
 # INPUT
 # *transforms: Función que modifica la imagen según las necesidades y debe retornar imagen rgb 
 # OUTPUT: String de respuesta con la imagen codificada
-def generate(*transforms):
-    cap = Camera(0, config.cameraConfig["width"],  config.cameraConfig["height"], 50)
+def generate(cap, *transforms):
     cap.open()
     try:
         while True:
@@ -125,11 +127,14 @@ def config_state():
 
 @app.route("/video_feed")
 def video_feed():
-    return Response(generate(apply_fourier_transform, draw_circle, apply_DHM_reconstruction, add_coordinate_axes), mimetype='multipart/x-mixed-replace; boundary=frame')
+    global cap
+    return Response(generate(cap, apply_fourier_transform, draw_circle, apply_DHM_reconstruction, add_coordinate_axes), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 @app.route("/download_feed")
 def download_feed():
     config.download = True
+    while (config.download):
+        time.sleep(0.001)
     return send_file(config.resourcesPath + "/DHM.jpg", mimetype='image/jpg')
 
 @app.route("/save_reference")
