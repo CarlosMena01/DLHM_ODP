@@ -1,0 +1,177 @@
+/* Generales */
+:root {
+  --main-color: #6f27c2;
+  --second-color: rgba(140, 48, 245, 0.44);
+  --light-color: #9666cc;
+  --anit-ligth-color: #f4a0f4;
+}
+
+body {
+  display: grid;
+  grid-template-rows: 10% 90%;
+  font-family: "Roboto", sans-serif;
+  height: 100vh;
+  width: 100vw;
+  background-color: #f2f2f2;
+}
+
+/* Encabezado */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  background-color: var(--main-color);
+}
+header img {
+  object-fit: contain;
+  height: 80%;
+  margin-right: 10px;
+}
+
+header .title {
+  font-weight: 800;
+  font-size: 25px;
+  line-height: 54px;
+
+  color: #ffffff;
+}
+
+/* Cuerpo */
+/* Izquierda (es la parte súperior para celular)*/
+main .left-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+main .left-container .superposition {
+  width: 100vw;
+  height: 100vw;
+}
+
+main .left-container .superposition canvas {
+  display: none;
+}
+main .left-container .superposition img {
+  width: 100vw;
+  height: 100vw;
+}
+
+/* Derecha */
+main .right-container {
+  display: grid;
+  grid-template-rows: 50% 40%;
+
+}
+
+/* Sliders */
+main .right-container .sliders {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+
+}
+main .right-container .sliders .slidecontainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  height: 10vh;
+}
+main .right-container .sliders .slidecontainer .slider-value {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+}
+
+main .right-container .sliders .slidecontainer .slider-value .numberInput {
+  width: 15%;
+  background: none;
+  border: none;
+  font-size: 16px;
+  font-weight: bold;
+}
+/* Etiquetas de entradas */
+label {
+  width: 95%;
+  font-size: 16px;
+  font-weight: bold;
+}
+.slider {
+  -webkit-appearance: none;
+  width: 80%;
+  height: 15px;
+  border-radius: 5px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: 0.2s;
+  transition: opacity 0.2s;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: var(--main-color);
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: var(--main-color);
+  cursor: pointer;
+}
+
+/* Botones */
+.container-2btns {
+  display: grid;
+  grid-template-columns: 50% 50%;
+}
+main .right-container .buttons {
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+button {
+  background-color: var(--light-color);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  /* border-radius: 5px; */
+  margin: 10px;
+}
+
+button:hover {
+  background-color: var(--second-color);
+}
+
+/* Añadimos un estilo para los botones al hacer clic */
+button:active {
+  transform: translateY(1px); /* Hacemos un pequeño movimiento hacia abajo */
+}
+
+/* Botón de reconstrucción */
+/* Estilos para el contenedor */
+.reconstruction-btns {
+  width: calc(100% - 20px + 1%);
+  display: grid;
+  grid-template-columns: 33% 33% 33%;
+  padding-left: 10px;
+}
+.reconstruction-btns button {
+  margin: 0;
+}
+
+.active {
+  background-color: var(--main-color);
+}
