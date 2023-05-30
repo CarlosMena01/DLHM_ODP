@@ -11,4 +11,4 @@ download = True
 saveReference = False
 resourcesPath = "./resources"
 
-cameraType = "picamera" # picamera or cv2
+cameraType = "cv2" # picamera or cv2

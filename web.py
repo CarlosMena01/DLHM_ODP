@@ -9,7 +9,7 @@ import config
 
 # Importamos la cámara según la librería solicitada
 if config.cameraType == "cv2":
-    from camera import *
+    from cameracv2 import *
 else:
     from camerapi import *
 
