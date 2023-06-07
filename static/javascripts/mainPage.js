@@ -120,7 +120,7 @@ const state = {
   fourier: false,
   reconstruction: false,
   grid: false,
-  root: "http://168.176.102.242:5000/", // Raíz de la URL de la API
+  root: server_ip + ":5000/", // Raíz de la URL de la API
 };
 
 // Función auxiliar para crear objetos URL y establecer los parámetros de búsqueda

@@ -2,6 +2,7 @@
 # Librerias para streaming
 from flask import Flask, render_template, Response, request, send_file
 from threading import Thread
+import socket
 # Librerías de manejo de tiempo
 import time
 from filters import *
@@ -78,7 +79,20 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
-     return render_template("index.html")
+    def get_ip():
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.settimeout(0)
+        try:
+            # doesn't even have to be reachable
+            s.connect(('10.254.254.254', 1))
+            IP = s.getsockname()[0]
+        except Exception:
+            IP = '127.0.0.1'
+        finally:
+            s.close()
+        return IP
+    server_ip = get_ip()
+    return render_template("index.html", server_ip=server_ip)
 
 @app.route("/compensation")
 def compensation():
