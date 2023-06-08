@@ -1,10 +1,13 @@
 # Librerias para procesamiento de imagenes
 import numpy as np
-from scipy.fftpack import fft2, fftshift, ifft2
+import pyfftw
+import multiprocessing
+from pyfftw.interfaces.numpy_fft import fft2, fftshift, ifft2
 import cv2
 import optics
 import config
 
+pyfftw.config.NUM_THREADS = multiprocessing.cpu_count()
 #---------------------Decoradores-----------------------------
 # Revisa la condición determinada dentro de "state" y si se encuentra desactivada, retorna el input
 def validation_transform(condition):
@@ -83,7 +86,8 @@ def image_interpol(image):
 @validation_transform("fourier")
 def apply_fourier_transform(frame):
     # Convertimos la imagen a escala de grises
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    gray = pyfftw.empty_aligned(frame.shape[:2], dtype='complex64', n=16)
+    gray[:] = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     
     # Aplicamos la transformada de Fourier a la imagen en escala de grises
     f = fft2(gray)
