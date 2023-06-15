@@ -3,6 +3,7 @@
 
 ### Testingfiles ###
 tests
+virtualenv/
 ### Flask ###
 instance/*
 !instance/.gitignore
