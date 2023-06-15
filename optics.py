@@ -62,6 +62,6 @@ def DHM_reconstruction(img, x,y, radio, angleX, angleY, reference):
     result = wave*result 
     
     # ---------- Restamos la referencia -----------------------------
-    result -= reference
+    result = result/reference
 
     return result
