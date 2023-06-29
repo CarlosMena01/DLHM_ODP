@@ -1,0 +1,7 @@
+sudo ./configure --enable-threads --enable-openmp
+sudo make
+sudo make install 
+
+
+#if some error on compilation
+make distclean
